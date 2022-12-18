@@ -12,22 +12,26 @@ import { AQUARIUM_PART, NEW_AQUARIUM_STEP } from "../../../utils/constants";
 
 export default function AquariumSize() {
     const [darkTheme, setDarkTheme] = useState()
-    const [aquariumPartSelected, setAquariumPartSelected] = useState(AQUARIUM_PART.HEIGHT)
-    const [aquariumHeight, setAquariumHeight] = useState('')
-    const [aquariumWidth, setAquariumWidth] = useState('')
-    const [aquariumLength, setAquariumLength] = useState('')
-    const [aquariumWater, setAquariumWater] = useState('')
     const {
         setCurrentStep,
-        aquariums
+        aquariumPartSelected,
+        setAquariumPartSelected,
+        aquariumHeight,
+        setAquariumHeight,
+        aquariumWidth,
+        setAquariumWidth,
+        aquariumLength,
+        setAquariumLength,
+        aquariumWater,
+        setAquariumWater
     } = useNewAquariumContext();
 
     function validateDimensions() {
         if (
-            aquariumHeight != '' &&
-            aquariumWidth != '' &&
-            aquariumLength != '' &&
-            aquariumWater != ''
+            +aquariumHeight > 0 &&
+            +aquariumWidth > 0 &&
+            +aquariumLength > 0 &&
+            +aquariumWater > 0
         ) {
             return true
         }
@@ -40,33 +44,41 @@ export default function AquariumSize() {
                 <CardVertical
                     className={`w-full max-w-2xl mx-auto`}
                     title={'Medidas do Aquário'}
-                    description={'Selecione o tamanho do aquário'}
+                    description={'Você pode definir o tamanho do seu aquário agora ou deixar que o Atlantis te indique um tamanho adequado.'}
                 >
                     <div className="flex flex-col sm:flex-row">
                         <div className="flex flex-col w-full sm:w-1/2 sm:pr-16 gap-4 my-auto">
                             <InputText
                                 label={'Altura'}
+                                complementText={'cm'}
                                 value={aquariumHeight}
                                 onChange={setAquariumHeight}
                                 onClick={() => setAquariumPartSelected(AQUARIUM_PART.HEIGHT)}
+                                onlyNumbers
                             />
                             <InputText
                                 label={'Largura'}
+                                complementText={'cm'}
                                 value={aquariumWidth}
                                 onChange={setAquariumWidth}
                                 onClick={() => setAquariumPartSelected(AQUARIUM_PART.WIDTH)}
+                                onlyNumbers
                             />
                             <InputText
                                 label={'Comprimento'}
+                                complementText={'cm'}
                                 value={aquariumLength}
                                 onChange={setAquariumLength}
                                 onClick={() => setAquariumPartSelected(AQUARIUM_PART.LENGTH)}
+                                onlyNumbers
                             />
                             <InputText
                                 label={'Coluna de água'}
+                                complementText={'cm'}
                                 value={aquariumWater}
                                 onChange={setAquariumWater}
                                 onClick={() => setAquariumPartSelected(AQUARIUM_PART.WATER)}
+                                onlyNumbers
                             />
                         </div>
                         <div className="w-1/2 ml-auto mr-auto sm:mr-36 md:mr-20">

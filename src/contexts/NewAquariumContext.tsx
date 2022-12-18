@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { NEW_AQUARIUM_STEP } from "../utils/constants"
+import { AQUARIUM_PART, NEW_AQUARIUM_STEP } from "../utils/constants"
 export const NewAquariumContext = createContext({} as NewAquariumContextType)
 
 type NewAquariumContextProviderProps = {
@@ -15,11 +15,26 @@ type AquariumType = {
 type NewAquariumContextType = {
   aquariums: AquariumType[]
   currentStep: number
-  setCurrentStep: (currentStep: number) => void 
+  setCurrentStep: (currentStep: number) => void
+  aquariumPartSelected: number
+  setAquariumPartSelected: (aquariumPartSelected: number) => void
+  aquariumHeight: string
+  setAquariumHeight: (aquariumHeight: string) => void
+  aquariumWidth: string
+  setAquariumWidth: (aquariumWidth: string) => void
+  aquariumLength: string
+  setAquariumLength: (aquariumLength: string) => void
+  aquariumWater: string
+  setAquariumWater: (aquariumWater: string) => void
 }
 
 export function NewAquariumContextProvider({ children }: NewAquariumContextProviderProps) {
   const [currentStep, setCurrentStep] = useState<number>(NEW_AQUARIUM_STEP.TYPE)
+  const [aquariumPartSelected, setAquariumPartSelected] = useState(AQUARIUM_PART.HEIGHT)
+  const [aquariumHeight, setAquariumHeight] = useState<string>('')
+  const [aquariumWidth, setAquariumWidth] = useState<string>('')
+  const [aquariumLength, setAquariumLength] = useState<string>('')
+  const [aquariumWater, setAquariumWater] = useState<string>('')
   const [aquariums, setAquariums] = useState<AquariumType[]>([
     {
       image: '/aquariums/comunitario.jpg',
@@ -63,7 +78,17 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
       value={{
         currentStep,
         setCurrentStep,
-        aquariums
+        aquariums,
+        aquariumPartSelected,
+        setAquariumPartSelected,
+        aquariumHeight,
+        setAquariumHeight,
+        aquariumWidth,
+        setAquariumWidth,
+        aquariumLength,
+        setAquariumLength,
+        aquariumWater,
+        setAquariumWater
       }}>
       {children}
     </NewAquariumContext.Provider>
