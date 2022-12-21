@@ -1,16 +1,12 @@
-import Card from "../../components/cards/CardHorizontal";
-import Waves from '../../components/waves/Waves'
-import { useState } from "react";
 import { useNewAquariumContext } from "../../contexts/NewAquariumContext";
 import { NEW_AQUARIUM_STEP } from "../../utils/constants";
 import AquariumType from "./newAquariumSteps/aquariumType";
 import AquariumSize from "./newAquariumSteps/aquariumSize";
+import AquariumFishes from "./newAquariumSteps/aquariumFishes";
 
 export default function NewAquarium() {
     const {
-        currentStep,
-        setCurrentStep,
-        aquariums
+        currentStep
     } = useNewAquariumContext();
 
     switch (currentStep) {
@@ -19,6 +15,6 @@ export default function NewAquarium() {
         case NEW_AQUARIUM_STEP.SIZE:
             return <AquariumSize />
         case NEW_AQUARIUM_STEP.FISH:
-            return <AquariumType />
+            return <AquariumFishes />
     }
 }

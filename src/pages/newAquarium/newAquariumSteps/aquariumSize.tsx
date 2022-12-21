@@ -1,7 +1,5 @@
 import { useState } from "react";
 import AquariumCube from "../../../components/aquarium/AquariumCube";
-import Wall from "../../../components/aquarium/AquariumWall";
-import Water from "../../../components/aquarium/AquariumWater";
 import PrimaryButton from "../../../components/buttons/PrimaryButton";
 import SecondaryButton from "../../../components/buttons/SecondaryButton";
 import TertiaryButton from "../../../components/buttons/TertiaryButton";
