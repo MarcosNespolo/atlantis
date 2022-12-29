@@ -14,8 +14,7 @@ export const AQUARIUM_PART = {
 export const AQUARIUM_POSITION = {
     TOP: 0,
     MIDDLE: 1,
-    BOTTOM: 2,
-    ALL: 3
+    BOTTOM: 2
 }
 
 export const SUBSTRATE = {
@@ -28,11 +27,21 @@ export const SUBSTRATE = {
     TURFA: 6
 }
 
+export const SubstrateName = [
+    'Sem substrato',
+    'Cascalho',
+    'Humus',
+    'Areia',
+    'Aragonita',
+    'Basalto',
+    'Turfa'
+]
+
 export const TEMPERAMENT = {
     PEACEFUL: 0,
     TERRITORIAL: 1,
-    PEACEFUL_TO_FEMALES: 2,
-    PEACEFUL_TO_MALES: 3,
+    TERRITORIAL_TO_FEMALES: 2,
+    TERRITORIAL_TO_MALES: 3,
     PEACEFUL_OTHERS: 4,
     TERRITORIAL_OTHERS: 5,
     AGGRESSIVE_TO_SMALLER: 6,
@@ -42,8 +51,8 @@ export const TEMPERAMENT = {
 export const TemperamentName = [
     'Pacífico com a mesma espécie',
     'Territorialista com a mesma espécie',
-    'Pacífico para fêmeas da mesma espécie',
-    'Pacífico para machos da mesma espécie',
+    'Territorialista para fêmeas da mesma espécie',
+    'Territorialista para machos da mesma espécie',
     'Pacífico com outras espécies',
     'Territorialista com outras espécies',
     'Agressivo com menores de outras espécies',
@@ -66,8 +75,18 @@ export const FOOD = {
     ARTEMIA: 5
 }
 
+export const FoodName = [
+    'Pastilha',
+    'Granulada',
+    'Floco',
+    'Tablet',
+    'Farinha',
+    'Artemia'
+]
+
 export type Fish = {
-    name: String
+    id: string
+    name: string
     images: string[]
     nameEn: string
     scientificName: String
@@ -98,22 +117,10 @@ export type Fish = {
     }
     volumeFirst: number
     volumeAdditional: number
-    temperature: {
-        min: number
-        max: number
-    }
-    ph: {
-        min: number
-        max: number
-    }
-    dgh: {
-        min: number
-        max: number
-    }
-    salinity: {
-        min: number
-        max: number
-    }
+    temperature: number[]
+    ph: number[]
+    dgh: number[]
+    salinity: number[]
     note?: string[]
-    quant?: number
+    quantity?: number
 }

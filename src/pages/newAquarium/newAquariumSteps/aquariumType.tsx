@@ -9,7 +9,7 @@ export default function AquariumType() {
     } = useNewAquariumContext();
 
     return (
-        <div className="h-screen w-full px-4 sm:px-8 ">
+        <div className="h-screen w-full max-w-xl mx-auto">
             <div className="flex flex-col gap-8 py-6 sm:py-12">
                 {aquariums && aquariums.map((aquarium, index) => (
                     <CardHorizontal
