@@ -26,6 +26,11 @@ export default function NewAquarium() {
     return (
         <div>
             {getAquariumStep()}
+            <CardAquarium
+                aquarium={aquarium}
+                className="absolute lg:w-60 xl:w-72 2xl:w-96 top-12 right-10"
+                onUpdateFishQuantity={updateFishQuantity}
+            />
         </div>
     )
 }

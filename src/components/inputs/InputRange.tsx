@@ -120,7 +120,6 @@ export default function InputRange({
                     max={interval[1]}
                     step={step}
                     valueLabelDisplay="auto"
-                    aria-label="Always visible"
                 />
             </div>
         </label>

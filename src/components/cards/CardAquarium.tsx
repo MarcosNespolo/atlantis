@@ -1,13 +1,12 @@
-import { ExclamationCircleIcon, ExclamationTriangleIcon, ShieldExclamationIcon } from "@heroicons/react/20/solid"
-import React, { useState } from "react"
-import { AQUARIUM_POSITION, Fish, FoodName, SubstrateName, TEMPERAMENT, TemperamentName } from "../../utils/constants"
+import React from "react"
+import { Aquarium, Fish } from "../../utils/constants"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
 import CardFish from "./CardFish"
 
 type CardProps = {
     id?: string
-    aquarium: {}
+    aquarium: Aquarium
     className?: string
     darkTheme?: boolean
     onUpdateFishQuantity?: (fishId: string, quantityUpdate: number) => void
@@ -40,28 +39,28 @@ export default function CardAquarium({
                     <span className="text-sm font-semibold whitespace-nowrap mr-1">Volume mínimo:</span>
                     <span className="text-sm">{aquarium.volume} L</span>
                 </div>
-                {(aquarium.size.width.min || aquarium.size.width.max) &&
+                {((aquarium.width[0] != null && aquarium.width[0] != 0) || (aquarium.width[1] != null && aquarium.width[1] != 0)) &&
                     <div className="flex flex-row items-center">
                         <span className="text-sm font-semibold whitespace-nowrap mr-1">Largura:</span>
                         <div className="flex flex-col 2xl:flex-row">
-                            {aquarium.size.width.min &&
-                                <span className="text-sm">mínimo de {aquarium.size.width.min}{aquarium.size.width.max ? ' e' : ' cm'}</span>
+                            {aquarium.width[0] &&
+                                <span className="text-sm mr-1">mínimo de {aquarium.width[0]}{aquarium.width[1] ? ' e' : ' cm'}</span>
                             }
-                            {aquarium.size.width.max &&
-                                <span className="text-sm">máximo de {aquarium.size.width.max} cm</span>
+                            {aquarium.width[1] &&
+                                <span className="text-sm mr-1">máximo de {aquarium.width[1]} cm</span>
                             }
                         </div>
                     </div>
                 }
-                {(aquarium.size.height.min || aquarium.size.height.max) &&
+                {((aquarium.width[0] != null && aquarium.width[0] != 0) || (aquarium.width[1] != null && aquarium.width[1] != 0)) &&
                     <div className="flex flex-row items-center">
                         <span className="text-sm font-semibold whitespace-nowrap mr-1">Altura:</span>
                         <div className="flex flex-col 2xl:flex-row">
-                            {aquarium.size.height.min &&
-                                <span className="text-sm mr-1">mínimo de {aquarium.size.height.min}{aquarium.size.height.max ? ' e' : ' cm'}</span>
+                            {aquarium.height[0] &&
+                                <span className="text-sm mr-1">mínimo de {aquarium.height[0]}{aquarium.height[1] ? ' e' : ' cm'}</span>
                             }
-                            {aquarium.size.height.max &&
-                                <span className="text-sm mr-1">máximo de {aquarium.size.height.max} cm</span>
+                            {aquarium.height[1] &&
+                                <span className="text-sm mr-1">máximo de {aquarium.height[1]} cm</span>
                             }
                         </div>
                     </div>

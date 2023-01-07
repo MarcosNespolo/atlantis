@@ -31,9 +31,9 @@ export default function CardFish({
             className={className}
         >
             <div className={`flex flex-col sm:flex-row w-full z-10 ${minicard ? 'h-16' : 'sm:h-44'}`}>
-                {fish.images[0] &&
+                {fish.image &&
                     <div className={`bg-gray-400/10 ${minicard ? 'h-16 w-32' : 'w-full sm:w-72 h-60 sm:h-44 '}`}>
-                        <img src={fish.images[0]} className={"object-cover h-full w-full rounded-br-md rounded-tl-md"} />
+                        <img src={fish.image} className={"object-cover h-full w-full rounded-br-md rounded-tl-md"} />
                     </div>
                 }
                 <div className="flex flex-col justify-between w-full h-fit pt-2 px-4">
@@ -148,8 +148,8 @@ export default function CardFish({
                         </div>
                         {fish.note && fish.note.length > 0 &&
                             <span className="flex flex-col gap-1 mt-4">
-                                {fish.note.map((note) => (
-                                    <span>{note}</span>
+                                {fish.note.map((note, index) => (
+                                    <span key={index}>{note}</span>
                                 ))}
                             </span>
                         }
@@ -213,7 +213,7 @@ export default function CardFish({
                     "
                 >
                     <PrimaryButton icon={'minus'} className="h-6" onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, -1)} />
-                    <span className="px-3">
+                    <span className="px-3 w-10">
                         {fish.quantity}
                     </span>
                     <PrimaryButton icon={'plus'} className="h-6" onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, +1)} />

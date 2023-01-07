@@ -59,13 +59,6 @@ export const TemperamentName = [
     'Agressivo com maiores de outras espécies'
 ]
 
-
-export const REPRODUCTION = {
-    OVIPAROUS: 0,
-    LIVEBEARING: 1,
-    OVOVIVIPAROUS: 2,
-}
-
 export const FOOD = {
     PASTILHA: 0,
     GRANULADA: 1,
@@ -87,34 +80,18 @@ export const FoodName = [
 export type Fish = {
     id: string
     name: string
-    images: string[]
+    image: string
     nameEn: string
-    scientificName: String
-    order: String
-    family: string
-    origin: string
+    scientificName: string
     minimumShoal: number
     position: number
-    reproduction: number
-    sexualDimorphism: string
-    characteristics: string
     substrates: number[]
     temperamentSame: number
     temperamentOthers: number
-    alimentation: string
     food: number[]
-    foodQuantity: number
     size: number
-    aquariumSize: {
-        width: {
-            min: number | null
-            max: number | null
-        }
-        height: {
-            min: number | null
-            max: number | null
-        }
-    }
+    aquariumWidth: (number | null)[]
+    aquariumHeight: (number | null)[]
     volumeFirst: number
     volumeAdditional: number
     temperature: number[]
@@ -123,4 +100,18 @@ export type Fish = {
     salinity: number[]
     note?: string[]
     quantity?: number
+}
+
+export type Aquarium = {
+    id: string
+    width: (number | null)[]
+    height: (number | null)[]
+    volume: number
+    temperature: number[]
+    ph: number[]
+    dgh: number[]
+    salinity: number[]
+    filter: number
+    thermostat: number
+    fishes: Fish[]
 }
