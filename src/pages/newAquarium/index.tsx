@@ -3,7 +3,6 @@ import { NEW_AQUARIUM_STEP } from "../../utils/constants";
 import AquariumType from "./newAquariumSteps/aquariumType";
 import AquariumSize from "./newAquariumSteps/aquariumSize";
 import AquariumFishes from "./newAquariumSteps/aquariumFishes";
-import CardAquarium from "../../components/cards/CardAquarium";
 
 export default function NewAquarium() {
     const {

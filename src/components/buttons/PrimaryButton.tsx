@@ -27,12 +27,12 @@ export default function PrimaryButton({
             onClick={onClick}
             disabled={disabled}
             className={
-                `h-10 
+                `h-12 
                 px-3
                 rounded
                 bg-gradient-to-r from-[#0B698B] to-[#0396A6]
                 shadow-md
-                text-white text-sm font-medium
+                text-white text-md font-medium
                 disabled:grayscale
                 disabled:from-[#a0a0a0]
                 disabled:to-[#d6d6d6]

@@ -23,7 +23,7 @@ export default function SecondaryButton({
             id={id}
             key={id}
             onClick={onClick}
-            className={`h-10 px-3 flex bg-white text-cyan-600 text-sm font-medium rounded shadow outline-none border border-1 border-gray-200 hover:saturate-150 hover:bg-gray-50 active:saturate-200 active:bg-gray-100 focus:ring-1 focus:outline-none focus:ring focus:ring-[#84bed1] ${className}`}>
+            className={`h-12 px-3 flex bg-white text-cyan-600 text-md font-medium rounded shadow outline-none border border-1 border-gray-200 hover:saturate-150 hover:bg-gray-50 active:saturate-200 active:bg-gray-100 focus:ring-1 focus:outline-none focus:ring focus:ring-[#84bed1] ${className}`}>
             <div className="flex mx-auto my-auto">
                 {icon &&
                     icon == 'eye'

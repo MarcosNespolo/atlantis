@@ -4,7 +4,7 @@ type InputTextProps = {
     id?: string
     name?: string
     className?: string
-    value?: string
+    value?: string | number
     label?: string
     complementText?: string
     onlyNumbers?: boolean
@@ -51,6 +51,7 @@ export default function InputText({
                 rounded
                 flex flex-col
                 border border-1
+                bg-white
                 hover:border-[#84bed1]
                 focus-within:border-[#84bed1]
                 group
