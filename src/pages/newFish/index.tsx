@@ -1,95 +1,70 @@
 import React, { useState } from "react"
-import { Fish } from "../../utils/constants"
 import Card from "../../components/cards/CardBase"
-import InputText from "../../components/inputs/InputText"
-import H2 from "../../components/texts/h2"
-import H1 from "../../components/texts/h1"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import SecondaryButton from "../../components/buttons/SecondaryButton"
+import Identification from "./steps/identification"
+import Behavior from "./steps/bahavior"
+import Food from "./steps/food"
+import Size from "./steps/size"
+import Water from "./steps/water"
+import Notes from "./steps/notes"
 
-type CardProps = {
+type CardFishProps = {
     id?: string
-    fish: Fish
-    className?: string
-    minicard?: boolean
     darkTheme?: boolean
-    onUpdateFishQuantity?: (fishId: string, quantityUpdate: number) => void
+}
+
+const STEP = {
+    IDENTIFICATION: 0,
+    BEHAVIOR: 1,
+    FOOD: 2,
+    SIZE: 3,
+    WATER: 4,
+    NOTES: 5
 }
 
 export default function CardFish({
     id,
-    fish,
-    className,
-    minicard,
-    darkTheme,
-    onUpdateFishQuantity
-}: CardProps) {
+    darkTheme
+}: CardFishProps) {
+    const [step, setStep] = useState<number>(0)
 
-    const [image, setImage] = useState<string>('')
-    const [name, setName] = useState<string>('')
-    const [nameEng, setNameEng] = useState<string>('')
-    const [scientificName, setScientificName] = useState<string>('')
-    const [minimumShoal, setMinimumShoal] = useState<number>(0)
-    const [position, setPosition] = useState<number>(0)
-    const [substrates, setSubstrates] = useState<number[]>([])
-    const [temperamentSame, setTemperamentSame] = useState<number>(0)
-    const [temperamentOthers, setTemperamentOthers] = useState<number>(0)
-    const [food, setFood] = useState<number[]>([])
-    const [size, setSize] = useState<number>(0)
-    const [aquariumWidth, setAquariumWidth] = useState<number | null>(null)
-    const [aquariumHeight, setAquariumHeight] = useState<number | null>(null)
-    const [volumeFirst, setVolumeFirst] = useState<number>(0)
-    const [volumeAdditional, setVolumeAdditional] = useState<number>(0)
-    const [temperature, setTemperature] = useState<number[]>([])
-    const [ph, setPh] = useState<number[]>([])
-    const [dgh, setDgh] = useState<number[]>([])
-    const [salinity, setSalinity] = useState<number[]>([])
-    const [note, setNote] = useState<string[]>([])
-    const [quantity, setQuantity] = useState<number>(0)
+
+    function getPageStep() {
+        switch (step) {
+            case STEP.IDENTIFICATION:
+                return <Identification />
+            case STEP.BEHAVIOR:
+                return <Behavior />
+            case STEP.FOOD:
+                return <Food />
+            case STEP.SIZE:
+                return <Size />
+            case STEP.WATER:
+                return <Water />
+            case STEP.NOTES:
+                return <Notes />
+        }
+    }
 
     return (
         <div className="flex h-screen w-full">
             <Card
                 id={id}
                 darkTheme={darkTheme}
-                className={`w-full max-w-2xl m-auto p-6 sm:p-10`}
+                className={`w-full max-w-2xl m-auto py-4 px-6 sm:py-8 sm:px-10`}
             >
-                <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8 gap-1">
-                    <H1 className={''}>
-                        Nova Espécie
-                    </H1>
-                    <H2 className={'flex items-end'}>
-                        Identificação
-                    </H2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6">
-                    <InputText
-                        label={'Nome científico'}
-                        className={'col-span-1 sm:col-span-2'}
-                        value={scientificName}
-                        onChange={setScientificName}
-                    />
-                    <InputText
-                        label={'Nome comum'}
-                        value={name}
-                        onChange={setName}
-                    />
-                    <InputText
-                        label={'Nome comum em inglês'}
-                        value={nameEng}
-                        onChange={setNameEng}
-                    />
-                </div>
+                {getPageStep()}
                 <div className="flex flex-col-reverse sm:flex-row justify-between mt-8 gap-4 sm:gap-8">
                     <SecondaryButton
-                        text={'Cancelar'}
+                        text={'Voltar'}
                         className="w-full"
-                        onClick={() => { }}
+                        onClick={() => step > STEP.IDENTIFICATION && setStep(step - 1)}
                     />
                     <PrimaryButton
                         text={'Continuar'}
                         className="w-full"
-                        onClick={() => { }}
+                        onClick={() => step < STEP.NOTES && setStep(step + 1)}
                     />
                 </div>
             </Card>

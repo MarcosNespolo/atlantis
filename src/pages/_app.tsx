@@ -7,6 +7,7 @@ import Image from "next/image"
 import circleLoading from '../../public/circleLoading.svg'
 import '../components/waves/Waves.css'
 import { NewAquariumContextProvider } from '../contexts/NewAquariumContext'
+import { NewFishContextProvider } from '../contexts/NewFishContext'
 import icon from '../../public/icons/icon-white.png'
 import Waves from '../components/waves/Waves'
 
@@ -21,12 +22,14 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="shortcut icon" href="/icons/icon-white.png" />
       </Head>
       <NewAquariumContextProvider>
-        {pageLoading
-          ? <div className='flex w-full h-screen justify-center items-center'>
-            <Image src={circleLoading} width="64" height="64" alt={''} />
-          </div>
-          : <Component {...pageProps} />
-        }
+        <NewFishContextProvider>
+          {pageLoading
+            ? <div className='flex w-full h-screen justify-center items-center'>
+              <Image src={circleLoading} width="64" height="64" alt={''} />
+            </div>
+            : <Component {...pageProps} />
+          }
+        </NewFishContextProvider>
       </NewAquariumContextProvider>
       <div className='fixed -z-10 flex bottom-0 w-full h-8 bg-primary-dark justify-center'>
         <Image width={40} src={icon} alt="Atlantis" />
