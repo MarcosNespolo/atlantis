@@ -54,7 +54,7 @@ export default function CardFish({
                 darkTheme={darkTheme}
                 className={`w-full max-w-2xl m-auto p-6 sm:p-10`}
             >
-                <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
+                <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8 gap-1">
                     <H1 className={''}>
                         Nova Espécie
                     </H1>

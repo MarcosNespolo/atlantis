@@ -10,7 +10,7 @@ export default function H1({
     children,
 }: InputTextProps) {
     return (
-        <span className={className + ' ' + 'font-semibold text-3xl uppercase text-neutral-500'}>
+        <span className={className + ' ' + 'font-semibold text-3xl text-neutral-600 '}>
             {children}
         </span>
     )
