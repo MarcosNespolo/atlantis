@@ -115,3 +115,20 @@ export type Aquarium = {
     thermostat: number
     fishes: Fish[]
 }
+
+export type Substrate = {
+    id?: string
+    name: string
+    image?: string
+}
+
+export type AlertMessage = {
+    code: number
+    message: string
+}
+
+export const ALERT_MESSAGE_CODE = {
+    WARNING: 0,
+    DANGER: 1,
+    SUCCESS: 2
+}

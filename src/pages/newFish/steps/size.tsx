@@ -7,21 +7,21 @@ import { useNewFishContext } from "../../../contexts/NewFishContext";
 export default function Size() {
 
     const {
+        size,
+        setSize,
+        aquariumWidth,
+        setAquariumWidth,
+        aquariumHeight,
+        setAquariumHeight,
+        volumeFirst,
+        setVolumeFirst,
+        volumeAdditional,
+        setVolumeAdditional
     } = useNewFishContext();
 
     return (
-        <>
-            <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
-                <H1 className={''}>
-                    Nova Espécie
-                </H1>
-                <H2 className={'flex items-end'}>
-                    Espaço
-                </H2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-                
-            </div>
-        </>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+
+        </div>
     )
 }

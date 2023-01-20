@@ -1,10 +1,13 @@
 import React from "react"
+import { AlertMessage } from "../../utils/constants"
+import CardMessage from "./CardMessage"
 
 type CardProps = {
     children: any
     id?: string
     className?: string
     darkTheme?: boolean
+    alertMessage?: AlertMessage
 }
 
 export default function Card({
@@ -12,6 +15,7 @@ export default function Card({
     children,
     className,
     darkTheme,
+    alertMessage
 }: CardProps) {
     return (
         <div
@@ -27,6 +31,7 @@ export default function Card({
                 ${darkTheme ? 'from-bg-black/30 text-white' : 'from-white/50 text-gray-700'}
                 ${className}
             `}>
+            {alertMessage && <CardMessage message={alertMessage.message} code={alertMessage.code} />}
             {children}
         </div>
     )

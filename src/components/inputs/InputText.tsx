@@ -8,7 +8,7 @@ type InputTextProps = {
     label?: string
     complementText?: string
     onlyNumbers?: boolean
-    onChange?: (value: string) => void
+    onChange?: (value: any) => void
     onClick?: () => void
 }
 
@@ -73,18 +73,18 @@ export default function InputText({
                     group-focus-within:pl-0
                     group-focus-within:text-[#84bed1]
                     ${(value && value?.toString().length > 0) ? 'text-xs' : 'text-md'}
-                    ${(value && value?.toString().length > 0) ? 'pt-0 pl-0' : 'pt-2 pl-2'}
+                    ${(value && value?.toString().length > 0) ? 'pt-0 pl-0' : 'pt-1.5 pl-2'}
                 `}
             >
                 {label}
             </label>
-            <div>
+            <div className="flex flex-row w-full">
                 <input
                     id={idHtmlFor}
                     value={value}
                     onChange={(e) => changeValue(e.target.value)}
                     className={`
-                    w-fit
+                    w-full
                     h-4
                     mt-1
                     group
