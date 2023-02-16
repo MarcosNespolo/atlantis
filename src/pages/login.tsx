@@ -7,7 +7,8 @@ import TertiaryButton from "../components/buttons/TertiaryButton"
 import Card from "../components/cards/CardBase"
 import InputText from "../components/inputs/InputText"
 import H1 from "../components/texts/h1"
-import { AlertMessage, ALERT_MESSAGE_CODE } from "../utils/constants"
+import { ALERT_MESSAGE_CODE } from "../utils/constants"
+import { AlertMessage } from "../utils/types"
 
 export default function Register() {
     const [name, setName] = useState<string>('')
