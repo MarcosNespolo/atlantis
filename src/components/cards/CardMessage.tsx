@@ -1,6 +1,7 @@
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
-import { AlertMessage, ALERT_MESSAGE_CODE } from "../../utils/constants"
+import { ALERT_MESSAGE_CODE } from "../../utils/constants"
+import { AlertMessage } from "../../utils/types"
 
 export default function CardMessage({ message, code }: AlertMessage) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -16,7 +17,7 @@ export default function CardMessage({ message, code }: AlertMessage) {
     return (
         <div
             className={`
-                absolute flex flex-row gap-1 text-sm font-medium top-0 right-0 w-fit pl-2 items-center rounded-bl-xl rounded-tr 
+                absolute flex flex-row gap-1 text-xs font-medium top-0 right-0 w-fit pl-2 items-center rounded-bl-xl rounded-tr shadow
                 ${code == ALERT_MESSAGE_CODE.SUCCESS
                     ? ' text-green-800 bg-green-500/30'
                     : code == ALERT_MESSAGE_CODE.DANGER

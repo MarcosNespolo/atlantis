@@ -1,5 +1,5 @@
 import React from "react"
-import { Aquarium, Fish } from "../../utils/constants"
+import { Aquarium, Fish } from "../../utils/types"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
 import CardFish from "./CardFish"

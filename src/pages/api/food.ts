@@ -1,14 +1,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import createNewSubstrate from '../../services/substrate'
-import { Substrate } from '../../utils/types'
+import createNewFood from '../../services/food'
+import { Food } from '../../utils/types'
 
-const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
+const foodApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     switch (req.method) {
       case 'POST': {
-        const substrate: Substrate = req.body
+        const food: Food = req.body
 
-        const response = await createNewSubstrate(substrate)
+        const response = await createNewFood(food)
 
         return res.status(response.statusCode).json(response.message)
       }
@@ -31,4 +31,4 @@ const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default substrateApi
+export default foodApi

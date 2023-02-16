@@ -1,32 +1,38 @@
-import React, { useState } from "react"
+import Router from "next/router"
+import React, { useContext, useState } from "react"
 import PrimaryButton from "../components/buttons/PrimaryButton"
-import SecondaryButton from "../components/buttons/SecondaryButton"
+import TertiaryButton from "../components/buttons/TertiaryButton"
 import Card from "../components/cards/CardBase"
 import InputText from "../components/inputs/InputText"
 import H1 from "../components/texts/h1"
 import { ALERT_MESSAGE_CODE } from "../utils/constants"
 import { AlertMessage } from "../utils/types"
+import { AuthContext } from '../contexts/AuthContext'
 
-export default function NewSubstrate() {
+export default function Register() {
     const [name, setName] = useState<string>('')
-    const [description, setDescription] = useState<string>('')
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [confirmPassword, setConfirmPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
+    const { signIn } = useContext(AuthContext)
 
-    async function insertSubstrate() {
+    async function registerUser() {
 
-        const subustrate = {
+        const user = {
             name,
-            description
+            email,
+            password
         }
 
         setLoading(true)
 
-        Promise.all([fetch('/api/substrate', {
+        Promise.all([fetch('/api/user', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin',
-            body: JSON.stringify(subustrate)
+            body: JSON.stringify(user)
         }).then(res => {
             if (res.status >= 400) {
                 console.log('Error na API:', res)
@@ -51,16 +57,16 @@ export default function NewSubstrate() {
         <div className="flex h-screen w-full">
             <Card
                 darkTheme={false}
-                className={`w-full max-w-2xl m-auto py-4 px-6 sm:py-8 sm:px-10`}
+                className={`w-full max-w-lg m-auto py-4 px-6 sm:py-8 sm:px-10`}
                 alertMessage={message}
             >
                 <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
                     <H1 className={''}>
-                        Novo Substrato
+                        Criar conta
                     </H1>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                <div className="grid grid-cols-1 gap-x-8 gap-y-4">
                     <InputText
                         label={'Nome'}
                         className={'col-span-1'}
@@ -68,25 +74,36 @@ export default function NewSubstrate() {
                         onChange={setName}
                     />
                     <InputText
-                        label={'Descrição'}
-                        className={'col-span-1 sm:col-span-2'}
-                        value={description}
-                        lines={2}
-                        onChange={setDescription}
+                        label={'E-mail'}
+                        className={'col-span-1'}
+                        value={email}
+                        onChange={setEmail}
+                    />
+                    <InputText
+                        label={'Senha'}
+                        className={'col-span-1'}
+                        value={password}
+                        onChange={setPassword}
+                    />
+                    <InputText
+                        label={'Confirme a senha'}
+                        className={'col-span-1'}
+                        value={confirmPassword}
+                        onChange={setConfirmPassword}
                     />
                 </div>
                 <div className="flex flex-col-reverse sm:flex-row justify-between mt-8 gap-4 sm:gap-8">
-                    <SecondaryButton
-                        text={'Cancelar'}
-                        className="w-full"
-                        onClick={() => { }}
-                    />
                     <PrimaryButton
                         text={'Salvar'}
                         className="w-full"
-                        onClick={() => insertSubstrate()}
+                        onClick={() => registerUser()}
                     />
                 </div>
+                <TertiaryButton
+                    text={'Já tenho uma conta'}
+                    className="w-fit mx-auto mt-4"
+                    onClick={() => Router.push('/login')}
+                />
             </Card>
         </div>
     )

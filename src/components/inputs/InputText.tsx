@@ -8,6 +8,7 @@ type InputTextProps = {
     label?: string
     complementText?: string
     onlyNumbers?: boolean
+    lines?: number
     onChange?: (value: any) => void
     onClick?: () => void
 }
@@ -20,6 +21,7 @@ export default function InputText({
     label,
     complementText,
     onlyNumbers,
+    lines = 1,
     onChange,
     onClick
 }: InputTextProps) {
@@ -73,28 +75,46 @@ export default function InputText({
                     group-focus-within:pl-0
                     group-focus-within:text-[#84bed1]
                     ${(value && value?.toString().length > 0) ? 'text-xs' : 'text-md'}
-                    ${(value && value?.toString().length > 0) ? 'pt-0 pl-0' : 'pt-1.5 pl-2'}
+                    ${(value && value?.toString().length > 0) ? 'pt-0 pl-0' : 'pt-2.5 pl-2'}
                 `}
             >
                 {label}
             </label>
             <div className="flex flex-row w-full">
-                <input
-                    id={idHtmlFor}
-                    value={value}
-                    onChange={(e) => changeValue(e.target.value)}
-                    className={`
-                    w-full
-                    h-4
-                    mt-1
-                    group
-                    caret-gray-800 
-                    text-gray-500 text-base font-normal
-                    group-hover:text-gray-900
-                    group-focus-within:text-gray-900
-                    appearance-none focus:outline-none focus:ring-0
-                `}
-                />
+                {lines > 1
+                    ? <textarea
+                        id={idHtmlFor}
+                        value={value}
+                        rows={lines}
+                        onChange={(e) => changeValue(e.target.value)}
+                        className={`
+                            w-full
+                            mt-1
+                            group
+                            caret-gray-800 
+                            text-gray-500 text-base font-normal
+                            group-hover:text-gray-900
+                            group-focus-within:text-gray-900
+                            appearance-none focus:outline-none focus:ring-0
+                        `}
+                    />
+                    : <input
+                        id={idHtmlFor}
+                        value={value}
+                        onChange={(e) => changeValue(e.target.value)}
+                        className={`
+                            w-full
+                            h-4.5
+                            mt-1
+                            group
+                            caret-gray-800 
+                            text-gray-500 text-base font-normal
+                            group-hover:text-gray-900
+                            group-focus-within:text-gray-900
+                            appearance-none focus:outline-none focus:ring-0
+                        `}
+                    />
+                }
                 {complementText &&
                     <label
                         htmlFor={idHtmlFor}

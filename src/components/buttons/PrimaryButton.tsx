@@ -30,15 +30,15 @@ export default function PrimaryButton({
                 `h-12 
                 px-3
                 rounded
-                bg-gradient-to-r from-[#0B698B] to-[#0396A6]
+                bg-gradient-to-br from-primary via-action-1 to-action-2
                 shadow-md
                 text-white text-md font-medium
                 disabled:grayscale
-                disabled:from-[#a0a0a0]
-                disabled:to-[#d6d6d6]
+                disabled:from-neutral-400
+                disabled:to-neutral-300
                 hover:saturate-150 hover:shadow-md
                 active:saturate-200
-                focus:ring-1 focus:outline-none focus:ring focus:ring-[#84bed1]
+                focus:ring-1 focus:outline-none focus:ring focus:ring-action-2
                 ${className}
             `}>
             <div

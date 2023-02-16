@@ -7,7 +7,7 @@ import H1 from "../components/texts/h1"
 import { ALERT_MESSAGE_CODE } from "../utils/constants"
 import { AlertMessage } from "../utils/types"
 
-export default function NewSubstrate() {
+export default function NewFood() {
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
@@ -15,18 +15,18 @@ export default function NewSubstrate() {
 
     async function insertSubstrate() {
 
-        const subustrate = {
+        const food = {
             name,
             description
         }
 
         setLoading(true)
 
-        Promise.all([fetch('/api/substrate', {
+        Promise.all([fetch('/api/food', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin',
-            body: JSON.stringify(subustrate)
+            body: JSON.stringify(food)
         }).then(res => {
             if (res.status >= 400) {
                 console.log('Error na API:', res)
@@ -56,7 +56,7 @@ export default function NewSubstrate() {
             >
                 <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
                     <H1 className={''}>
-                        Novo Substrato
+                        Novo Alimento
                     </H1>
                 </div>
 

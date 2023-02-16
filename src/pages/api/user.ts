@@ -1,14 +1,15 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import createNewSubstrate from '../../services/substrate'
-import { Substrate } from '../../utils/types'
+import registerNewUser from '../../services/user'
+import { User } from '../../utils/types'
 
-const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
+const userApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    
     switch (req.method) {
       case 'POST': {
-        const substrate: Substrate = req.body
+        const user: User = req.body
 
-        const response = await createNewSubstrate(substrate)
+        const response = await registerNewUser(user)
 
         return res.status(response.statusCode).json(response.message)
       }
@@ -31,4 +32,4 @@ const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default substrateApi
+export default userApi

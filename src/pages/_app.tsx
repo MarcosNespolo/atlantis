@@ -1,4 +1,6 @@
 import type { AppProps } from 'next/app'
+import { NextPage } from 'next'
+import { ScriptProps } from 'next/script'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useState } from 'react'
@@ -8,34 +10,44 @@ import circleLoading from '../../public/circleLoading.svg'
 import '../components/waves/Waves.css'
 import { NewAquariumContextProvider } from '../contexts/NewAquariumContext'
 import { NewFishContextProvider } from '../contexts/NewFishContext'
-import icon from '../../public/icons/icon-white.png'
+import icon from '../../public/icons/atlantis_icon_white.png'
 import Waves from '../components/waves/Waves'
+import MenuLayout from '../layouts/menuLayout'
 
-export default function App({ Component, pageProps }: AppProps) {
+type Page<P = Record<string, never>> = NextPage<P> & {
+  Layout: (page: ScriptProps) => JSX.Element;
+};
+
+type Props = AppProps & {
+  Component: Page;
+};
+
+export default function App({ Component, pageProps }: Props) {
   const router = useRouter()
   const [pageLoading, setPageLoading] = useState<boolean>(false)
+  const Layout = Component.Layout || MenuLayout;
 
   return (
     <>
       <Head>
         <title>Atlantis</title>
-        <link rel="shortcut icon" href="/icons/icon-white.png" />
+        <link rel="shortcut icon" href="/icons/atlantis_icon_white.svg" />
       </Head>
       <NewAquariumContextProvider>
         <NewFishContextProvider>
-          {pageLoading
-            ? <div className='flex w-full h-screen justify-center items-center'>
-              <Image src={circleLoading} width="64" height="64" alt={''} />
-            </div>
-            : <Component {...pageProps} />
-          }
+          <Layout>
+            {pageLoading
+              ? <div className='flex w-full h-screen justify-center items-center'>
+                <Image src={circleLoading} width="64" height="64" alt={''} />
+              </div>
+              : <Component {...pageProps} />
+            }
+          </Layout>
         </NewFishContextProvider>
       </NewAquariumContextProvider>
-      <div className='fixed -z-10 flex bottom-0 w-full h-8 bg-primary-dark justify-center'>
+      <div className='fixed -z-10 flex bottom-0 w-full h-8 bg-primary-light justify-center'>
         <Image width={40} src={icon} alt="Atlantis" />
       </div>
-      <Waves className="rotate-180 -z-20 -top-0 opacity-30" />
-      <Waves className="-bottom-0 -z-20 opacity-30" />
     </>
   )
 }

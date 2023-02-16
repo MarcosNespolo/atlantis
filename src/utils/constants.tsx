@@ -27,7 +27,7 @@ export const SUBSTRATE = {
     TURFA: 6
 }
 
-export const SubstrateName = [
+export const SUBSTRATE_NAME = [
     'Sem substrato',
     'Cascalho',
     'Humus',
@@ -48,7 +48,7 @@ export const TEMPERAMENT = {
     AGGRESSIVE_TO_LARGER: 7
 }
 
-export const TemperamentName = [
+export const TEMPERAMENT_NAME = [
     'Pacífico com a mesma espécie',
     'Territorialista com a mesma espécie',
     'Territorialista para fêmeas da mesma espécie',
@@ -68,7 +68,7 @@ export const FOOD = {
     ARTEMIA: 5
 }
 
-export const FoodName = [
+export const FOOD_NAME = [
     'Pastilha',
     'Granulada',
     'Floco',
@@ -76,56 +76,6 @@ export const FoodName = [
     'Farinha',
     'Artemia'
 ]
-
-export type Fish = {
-    id: string
-    name: string
-    image: string
-    nameEn: string
-    scientificName: string
-    minimumShoal: number
-    position: number
-    substrates: number[]
-    temperamentSame: number
-    temperamentOthers: number
-    food: number[]
-    size: number
-    aquariumWidth: (number | null)[]
-    aquariumHeight: (number | null)[]
-    volumeFirst: number
-    volumeAdditional: number
-    temperature: number[]
-    ph: number[]
-    dgh: number[]
-    salinity: number[]
-    note?: string[]
-    quantity?: number
-}
-
-export type Aquarium = {
-    id: string
-    width: (number | null)[]
-    height: (number | null)[]
-    volume: number
-    temperature: number[]
-    ph: number[]
-    dgh: number[]
-    salinity: number[]
-    filter: number
-    thermostat: number
-    fishes: Fish[]
-}
-
-export type Substrate = {
-    id?: string
-    name: string
-    image?: string
-}
-
-export type AlertMessage = {
-    code: number
-    message: string
-}
 
 export const ALERT_MESSAGE_CODE = {
     WARNING: 0,

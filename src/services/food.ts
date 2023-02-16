@@ -1,15 +1,15 @@
 import { supabase } from "../../supabaseClient";
-import { Substrate } from "../utils/types";
+import { Food } from "../utils/types";
 
-export default async function createNewSubstrate(substrate: Substrate) {
+export default async function createNewFood(food: Food) {
     const { data: substrateData, error: substrateDataError } = await supabase
-        .from('SUBSTRATE')
-        .insert(substrate)
+        .from('FOOD')
+        .insert(food)
 
     if (substrateDataError) {
         console.log(substrateDataError)
         throw { message: substrateDataError.message, statusCode: 500 }
     }
 
-    return { statusCode: 200, message: 'Novo substrato salvo na base da dados!' }
+    return { statusCode: 200, message: 'Novo alimento salvo na base da dados!' }
 }

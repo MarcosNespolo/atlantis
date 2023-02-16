@@ -1,6 +1,7 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid"
 import React, { useState } from "react"
-import { AQUARIUM_POSITION, Fish, FoodName, SubstrateName, TEMPERAMENT, TemperamentName } from "../../utils/constants"
+import { AQUARIUM_POSITION, FOOD_NAME, SUBSTRATE_NAME, TEMPERAMENT, TEMPERAMENT_NAME } from "../../utils/constants"
+import { Fish } from "../../utils/types"
 import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
@@ -90,10 +91,11 @@ export default function CardFish({
                                 <span className="font-semibold text-sm whitespace-nowrap">
                                     Posição no aquário
                                 </span>
-                                <div className="flex h-16 w-32 mt-1.5 bg-cyan-100 rounded">
+                                <div className="flex h-16 w-32 mt-1.5 bg-primary-light/50 rounded">
                                     <img
-                                        src="/icons/icon.png"
+                                        src="/icons/atlantis_icon.svg"
                                         className={`
+                                            object-contain
                                             mx-auto 
                                             w-6 h-6 
                                             ${fish.position == AQUARIUM_POSITION.TOP
@@ -130,8 +132,8 @@ export default function CardFish({
                                 <span className="flex flex-col">
                                     {fish.substrates.map((substrate, index) => (
                                         index + 1 < fish.substrates.length
-                                            ? SubstrateName[substrate] + ', '
-                                            : SubstrateName[substrate]
+                                            ? SUBSTRATE_NAME[substrate] + ', '
+                                            : SUBSTRATE_NAME[substrate]
                                     ))}
                                 </span>
                             </div>
@@ -140,8 +142,8 @@ export default function CardFish({
                                 <span className="flex flex-col">
                                     {fish.food.map((food, index) => (
                                         index + 1 < fish.food.length
-                                            ? FoodName[food] + ', '
-                                            : FoodName[food]
+                                            ? FOOD_NAME[food] + ', '
+                                            : FOOD_NAME[food]
                                     ))}
                                 </span>
                             </div>
@@ -164,12 +166,12 @@ export default function CardFish({
                         }
                         {fish.temperamentSame != TEMPERAMENT.PEACEFUL &&
                             <span className="flex font-semibold items-start">
-                                <ExclamationTriangleIcon className={`w-4 mr-1 text-red-700 mt-0.5`} /> {TemperamentName[fish.temperamentSame]}
+                                <ExclamationTriangleIcon className={`w-4 mr-1 text-red-700 mt-0.5`} /> {TEMPERAMENT_NAME[fish.temperamentSame]}
                             </span>
                         }
                         {fish.temperamentOthers != TEMPERAMENT.PEACEFUL_OTHERS &&
                             <span className="flex font-semibold">
-                                <ExclamationTriangleIcon className="w-4 mt-0.5 mr-1 text-red-700" /> {TemperamentName[fish.temperamentOthers]}
+                                <ExclamationTriangleIcon className="w-4 mt-0.5 mr-1 text-red-700" /> {TEMPERAMENT_NAME[fish.temperamentOthers]}
                             </span>
                         }
                     </>

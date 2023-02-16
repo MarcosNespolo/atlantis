@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { AQUARIUM_PART, AQUARIUM_POSITION, NEW_AQUARIUM_STEP, SUBSTRATE, Fish, TEMPERAMENT, FOOD, Aquarium } from "../utils/constants"
-export const NewAquariumContext = createContext({} as NewAquariumContextType)
+import { AQUARIUM_PART, AQUARIUM_POSITION, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD } from "../utils/constants"
+import {Fish, Aquarium} from "../utils/types"
 
 type NewAquariumContextProviderProps = {
   children: ReactNode
@@ -356,3 +356,5 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
 export const useNewAquariumContext = () => {
   return useContext(NewAquariumContext);
 }
+
+export const NewAquariumContext = createContext({} as NewAquariumContextType)

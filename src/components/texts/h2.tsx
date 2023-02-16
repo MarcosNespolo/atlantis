@@ -10,7 +10,7 @@ export default function H2({
     children,
 }: InputTextProps) {
     return (
-        <span className={className + ' ' + 'font-semibold text-sm sm:text-lg text-[#0B698B]/80 tracking-wide uppercase'}>
+        <span className={className + ' ' + 'font-semibold text-sm sm:text-lg text-action-2 tracking-wide uppercase'}>
             {children}
         </span>
     )
