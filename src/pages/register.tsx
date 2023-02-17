@@ -16,7 +16,6 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
-    const { signIn } = useContext(AuthContext)
 
     async function registerUser() {
 

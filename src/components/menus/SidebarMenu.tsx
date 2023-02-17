@@ -9,7 +9,7 @@ function SidebarMenu() {
 
   const defaultNavigation = [
     { name: 'Aquários', href: '/newAquarium', icon: GlobeAmericasIcon },
-    { name: 'Espécies', href: '/newFish', icon: GlobeAmericasIcon },
+    // { name: 'Espécies', href: '/newFish', icon: GlobeAmericasIcon },
   ]
 
   const specialistNavigation = [
@@ -21,7 +21,7 @@ function SidebarMenu() {
     { name: 'Usuários', href: '/dashboard/appearance', icon: GlobeAmericasIcon },
   ]
 
-  const [navigation, setNavigation] = useState([...defaultNavigation, ...specialistNavigation, ...adminNavigation])
+  const [navigation, setNavigation] = useState([...defaultNavigation])
 
   return (
     <>

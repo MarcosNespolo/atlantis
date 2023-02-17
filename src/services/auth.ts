@@ -48,7 +48,7 @@ export async function signInRequest({email, password}: SignInRequestData) {
       method: 'POST',
       headers: new Headers({ 'Content-Type': 'application/json' }),
       credentials: 'same-origin',
-      body: JSON.stringify({ email: email, password: password, t: 'signin' }),
+      body: JSON.stringify({ u: email, p: password, e: 'signin' }),
     }).then((res) => {
       return res.json()
     }

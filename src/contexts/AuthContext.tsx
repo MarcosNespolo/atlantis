@@ -7,15 +7,16 @@ type AuthContextProviderProps = {
 }
 
 type AuthContextType = {
-    signIn: (email: string, password: string) => Promise<void>
+    login: (email: string, password: string) => Promise<string>
     signOut: () => Promise<void>
 }
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
-    async function signIn(email: string, password: string) {
+    async function login(email: string, password: string) {
         const { user, error } = await signInRequest({ email, password })
         console.log(user)
+        console.log(error)
         if (error) {
             return error
         }
@@ -29,7 +30,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     return (
         <AuthContext.Provider
             value={{
-                signIn,
+                login,
                 signOut
             }}>
             {children}

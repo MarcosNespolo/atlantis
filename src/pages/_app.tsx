@@ -11,8 +11,8 @@ import '../components/waves/Waves.css'
 import { NewAquariumContextProvider } from '../contexts/NewAquariumContext'
 import { NewFishContextProvider } from '../contexts/NewFishContext'
 import icon from '../../public/icons/atlantis_icon_white.png'
-import Waves from '../components/waves/Waves'
 import MenuLayout from '../layouts/menuLayout'
+import { AuthContextProvider } from '../contexts/AuthContext'
 
 type Page<P = Record<string, never>> = NextPage<P> & {
   Layout: (page: ScriptProps) => JSX.Element;
@@ -35,14 +35,16 @@ export default function App({ Component, pageProps }: Props) {
       </Head>
       <NewAquariumContextProvider>
         <NewFishContextProvider>
-          <Layout>
-            {pageLoading
-              ? <div className='flex w-full h-screen justify-center items-center'>
-                <Image src={circleLoading} width="64" height="64" alt={''} />
-              </div>
-              : <Component {...pageProps} />
-            }
-          </Layout>
+          <AuthContextProvider>
+            <Layout>
+              {pageLoading
+                ? <div className='flex w-full h-screen justify-center items-center'>
+                  <Image src={circleLoading} width="64" height="64" alt={''} />
+                </div>
+                : <Component {...pageProps} />
+              }
+            </Layout>
+          </AuthContextProvider>
         </NewFishContextProvider>
       </NewAquariumContextProvider>
       <div className='fixed -z-10 flex bottom-0 w-full h-8 bg-primary-light justify-center'>

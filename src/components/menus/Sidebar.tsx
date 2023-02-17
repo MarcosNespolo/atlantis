@@ -19,8 +19,8 @@ function Sidebar() {
                         </div>
                     </Link>
                     <SidebarMenu />
-                    <div className='h-20'></div>
-                    <UserBar />
+                    {/* <div className='h-20'></div> */}
+                    {/* <UserBar /> */}
                 </div>
                 <div className='relative w-6 h-6 overflow-hidden'>
                     <div className='absolute w-12 h-12 rounded-full shadow-circle '>

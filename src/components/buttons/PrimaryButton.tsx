@@ -4,26 +4,29 @@ import React from "react"
 type ButtonProps = {
     id?: string
     className?: string
+    type?: "button" | "submit" | "reset"
     text?: string
     icon?: string
     loading?: boolean
     disabled?: boolean
-    onClick: () => void
+    onClick?: () => void
 }
 
 export default function PrimaryButton({
     id,
     className,
     text,
+    type = 'button',
     icon,
-    loading,
+    loading = false,
     disabled = false,
-    onClick
+    onClick = () => {}
 }: ButtonProps) {
 
     return (
         <button
             id={id}
+            type={type}
             onClick={onClick}
             disabled={disabled}
             className={
