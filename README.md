@@ -1,34 +1,46 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<h1 align="center"> ATLANTIS </h1>
+<h3 align="center"> SISTEMA GERENCIADOR DE AQUÁRIOS DOMÉSTICOS </h3>
 
-## Getting Started
+<img src="./public/homepage.jpg" alt="ATLANTIS HOME PAGE">
 
-First, run the development server:
+<p align="justify">Atlantis é um sistema web que utiliza a linguagem TypeScript, com o framework Next.js, que faz parte da biblioteca React.js, para o front-end, e o Node.js como um ambiente de execução server-side. Para persistência dos dados, foi utilizada a plataforma Supabase, com o SGBD PostgreSQL, e a no qual um expert na área de aquarismo possa estabelecer uma base de dados consistente, e assim, outra parte do sistema consiga prestar auxílio a um usuário que se interesse em montar aquários domésticos, de água doce ou salgada, informando-o se as espécies de peixes que deseja criar são compatíveis entre si e com as características do aquário.</p>
 
-```bash
-npm run dev
-# or
-yarn dev
+## 💻 Requisitos
+
+Para executar a aplicação localmente, é necessário ter o `Node.js` e o `NPM` instalados na máquina.
+
+
+## 🚀 Instalação
+
+
+1 - Clone o repositório em sua máquina local:
+```
+git clone https://github.com/MarcosNespolo/atlantis.git
+```
+2 - Na pasta raiz do projeto, instale as dependências:
+```
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3 - Crie um arquivo .env.local na raiz do projeto com as variáveis de ambiente necessárias (enviadas por e-mail):
+```
+NEXT_PUBLIC_SUPABASE_URL=https://seu-endereco-do-supabase.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=chave-publica-do-supabase
+```
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+4 - Execute a aplicação localmente:
+```
+npm run dev
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+5 - Acesse http://localhost:3000 em seu navegador para visualizar a aplicação.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## 🔧 Tecnologias utilizadas
+- [x] Next.js
+- [x] React.js
+- [x] TypeScript
+- [x] Tailwind
+- [x] Supabase
+- [x] PostgreSQL
+- [x] HTML
+- [x] CSS
