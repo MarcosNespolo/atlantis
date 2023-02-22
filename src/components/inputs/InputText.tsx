@@ -8,6 +8,7 @@ type InputTextProps = {
     label?: string
     complementText?: string
     onlyNumbers?: boolean
+    isPassword?: boolean
     lines?: number
     onChange?: (value: any) => void
     onClick?: () => void
@@ -21,6 +22,7 @@ export default function InputText({
     label,
     complementText,
     onlyNumbers,
+    isPassword = false,
     lines = 1,
     onChange,
     onClick
@@ -101,6 +103,7 @@ export default function InputText({
                     : <input
                         id={idHtmlFor}
                         value={value}
+                        type={isPassword ? 'password' : 'text'}
                         onChange={(e) => changeValue(e.target.value)}
                         className={`
                             w-full

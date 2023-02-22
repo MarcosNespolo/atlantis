@@ -1,3 +1,4 @@
+import { GetServerSideProps } from "next"
 import Router from "next/router"
 import React, { useState } from "react"
 import PrimaryButton from "../components/buttons/PrimaryButton"
@@ -8,32 +9,37 @@ import H1 from "../components/texts/h1"
 import { useAuthContext } from "../contexts/AuthContext"
 import { ALERT_MESSAGE_CODE } from "../utils/constants"
 import { AlertMessage } from "../utils/types"
+import { parseCookies } from 'nookies'
+import Link from "next/link"
 
 export default function Login() {
-    const [email, setEmail] = useState<string>('')
-    const [password, setPassword] = useState<string>('')
+    const [email, setEmail] = useState<string>('aquarista@email.com')
+    const [password, setPassword] = useState<string>('123456')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
     const {
         login
     } = useAuthContext()
 
-
     const onFormSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
         if (!loading && login) {
             console.log(email, password)
-            setMessage({ message: await login(email, password), code: ALERT_MESSAGE_CODE.DANGER })
+            const responseMessage = await login(email, password)
+            if (responseMessage) {
+                setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })
+            } else {
+                setMessage(undefined)
+            }
         }
     }
-
 
     return (
         <div className="flex h-screen w-full">
             <Card
                 darkTheme={false}
                 className={`w-full max-w-lg m-auto py-4 px-6 sm:py-8 sm:px-10`}
-                alertMessage={message}
+                alertMessage={message && message}
             >
                 <form className='' onSubmit={onFormSubmit}>
                     <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
@@ -51,6 +57,7 @@ export default function Login() {
                         />
                         <InputText
                             label={'Senha'}
+                            isPassword
                             className={'col-span-1'}
                             value={password}
                             onChange={setPassword}
@@ -63,13 +70,29 @@ export default function Login() {
                             className="w-full"
                         />
                     </div>
-                    <TertiaryButton
-                        text={'Criar conta'}
-                        className="w-fit mx-auto mt-4"
-                        onClick={() => Router.push('/register')}
-                    />
+                    <Link href='/register'>
+                        <TertiaryButton
+                            text={'Criar conta'}
+                            className="w-fit mx-auto mt-4"
+                        />
+                    </Link>
                 </form>
             </Card>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { ['atlantis_token']: token } = parseCookies(ctx)
+
+    if (token) {
+        return {
+            redirect: {
+                destination: '/newAquarium',
+                permanent: false,
+            }
+        }
+    }
+
+    return { props: {} }
 }

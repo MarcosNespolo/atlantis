@@ -1,6 +1,10 @@
+import { REQUEST_TYPE } from "../utils/constants"
+
 type SignInRequestData = {
   email: string
   password: string
+  type: number
+  name?: string
 }
 
 export async function signOutRequest() {
@@ -9,11 +13,10 @@ export async function signOutRequest() {
     method: 'POST',
     headers: new Headers({ 'Content-Type': 'application/json' }),
     credentials: 'same-origin',
-    body: JSON.stringify({ t: 'signout' }),
+    body: JSON.stringify({ event: REQUEST_TYPE.SIGN_OUT }),
   }).then((res) => {
     return res.json()
-  }
-  )
+  })
 
   if (auth.error) {
     console.log('error', auth.error)
@@ -23,97 +26,70 @@ export async function signOutRequest() {
     }
   }
 
-  const event = 'SIGNED_OUT'
-  const session = null
-
-  const login = await fetch('/api/authorize', {
-    method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    credentials: 'same-origin',
-    body: JSON.stringify({ event, session }),
-  }).then((res) => {
-    return res.json()
-  }
-  )
-
   return true
 }
 
+type SignInRequestResponse = {
+  user: string,
+  error: string,
+  token: string
+}
 
-
-export async function signInRequest({email, password}: SignInRequestData) {
+export async function signInRequest({ email, password, type, name }: SignInRequestData) {
   try {
-
     const auth = await fetch(`/api/auth`, {
       method: 'POST',
       headers: new Headers({ 'Content-Type': 'application/json' }),
       credentials: 'same-origin',
-      body: JSON.stringify({ u: email, p: password, e: 'signin' }),
+      body: JSON.stringify({ email: email, password: password, event: type, name }),
     }).then((res) => {
       return res.json()
-    }
-    )
+    })
 
     if (auth.error) {
-      console.log('error', auth.error)
-      return {
-        user: null,
-        error: auth.error
-      }
+      throw new Error(auth.error)
     }
 
-    const event = 'SIGNED_IN'
-    const session = auth.session
+    const response: SignInRequestResponse = {
+      token: auth.token,
+      user: auth.user,
+      error: auth.error
+    }
+    return response
 
-    const login = await fetch('/api/authorize', {
-      method: 'POST',
+  } catch (error: any) {
+    console.log('Error thrown:', error)
+    return {
+      token: null,
+      user: null,
+      error: error.message
+    }
+  }
+}
+
+export async function recoverUserInformation() {
+  try {
+    const user = await fetch(`/api/user`, {
+      method: 'GET',
       headers: new Headers({ 'Content-Type': 'application/json' }),
-      credentials: 'same-origin',
-      body: JSON.stringify({ event, session }),
-    }).then((res) => {
-      return res.json()
-    }
-    )
+      credentials: 'same-origin'
+    }).then(async (res) => {
+      if (res.status == 200) {
+        return res.json()
+      }
+      throw new Error(await res.json())
+    })
 
-    const info = {
-      user: {
-        email: email
-      },
+    return {
+      user: user,
       error: null
     }
-    return info
 
-  } catch (error) {
+  } catch (error: any) {
     console.log('Error thrown:', error)
     return {
       user: null,
-      error: 'Error'
+      error: error.message
     }
   }
 }
-
-/*
-export async function recoverUserInformation() {
-  try {
-    const session = supabase.auth.session()
-
-    if (session) {
-
-      const info = {
-        user: {
-          id: session.user.id,
-          avatar_url: null,
-          email: session.user.email
-        },
-        error: null
-      }
-
-      return info
-    }
-    return null
-
-  } catch (error) {
-    console.log('Error thrown:', error.error_description || error.message)
-  }
-}
-  */

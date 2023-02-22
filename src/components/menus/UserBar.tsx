@@ -1,17 +1,30 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { UserIcon } from '@heroicons/react/24/outline'
+import { UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import { useAuthContext } from '../../contexts/AuthContext'
 
 function UserBar() {
   const router = useRouter()
   const path = '/'.concat(router.pathname.split('/')[1])
-
   const defaultNavigation = [
     { name: 'Entrar', href: '/login', icon: UserIcon },
   ]
+  const [navigation, setNavigation] = useState(defaultNavigation)
+  const {
+    user
+  } = useAuthContext()
 
-  const [navigation, setNavigation] = useState([...defaultNavigation])
+  useEffect(() => {
+    if (user) {
+      setNavigation([
+        { name: 'Sair', href: '/logout', icon: ArrowRightOnRectangleIcon },
+      ])
+    } else {
+      setNavigation(defaultNavigation)
+    }
+
+  }, [user])
 
   return (
     <>
@@ -38,7 +51,6 @@ function UserBar() {
             />
             {item.name}
           </Link>
-
         ))}
       </nav>
     </>

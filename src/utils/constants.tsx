@@ -82,3 +82,9 @@ export const ALERT_MESSAGE_CODE = {
     DANGER: 1,
     SUCCESS: 2
 }
+
+export const REQUEST_TYPE = {
+    SIGN_UP: 1,
+    SIGN_IN: 2,
+    SIGN_OUT: 3,
+}

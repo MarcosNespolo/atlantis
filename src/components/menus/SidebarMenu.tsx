@@ -1,11 +1,15 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GlobeAmericasIcon } from '@heroicons/react/24/outline'
+import { useAuthContext } from '../../contexts/AuthContext'
 
 function SidebarMenu() {
   const router = useRouter()
   const path = '/'.concat(router.pathname.split('/')[1])
+  const {
+    user
+  } = useAuthContext()
 
   const defaultNavigation = [
     { name: 'Aquários', href: '/newAquarium', icon: GlobeAmericasIcon },
@@ -13,7 +17,7 @@ function SidebarMenu() {
   ]
 
   const specialistNavigation = [
-    { name: 'Rações', href: '/newFood', icon: GlobeAmericasIcon },
+    { name: 'Alimentos', href: '/newFood', icon: GlobeAmericasIcon },
     { name: 'Substratos', href: '/newSubstrate', icon: GlobeAmericasIcon },
   ]
 
@@ -21,12 +25,32 @@ function SidebarMenu() {
     { name: 'Usuários', href: '/dashboard/appearance', icon: GlobeAmericasIcon },
   ]
 
-  const [navigation, setNavigation] = useState([...defaultNavigation])
+  const [navigation, setNavigation] = useState<any>([])
+
+  useEffect(() => {
+    if (user?.role_id) {
+      switch (user.role_id) {
+        case 1:
+          setNavigation(defaultNavigation)
+          break
+        case 2:
+          setNavigation([...defaultNavigation, ...specialistNavigation])
+          break
+        case 3:
+          setNavigation([...defaultNavigation, ...specialistNavigation, ...adminNavigation])
+          break
+        default:
+          setNavigation(defaultNavigation)
+      }
+    } else {
+      setNavigation([])
+    }
+  }, [user])
 
   return (
     <>
       <nav className="flex-1 pb-2 space-y-1">
-        {navigation && navigation.map((item) => (
+        {navigation && navigation.map((item: any) => (
           <Link
             key={item.name}
             href={item.href}

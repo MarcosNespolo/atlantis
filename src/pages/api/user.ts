@@ -1,10 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import registerNewUser from '../../services/user'
+import getToken from '../../services/getToken'
+import { registerNewUser, getCurrentUser } from '../../services/user'
 import { User } from '../../utils/types'
 
 const userApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    
+    const token = await getToken(req)
+    if(!token){}
+
     switch (req.method) {
       case 'POST': {
         const user: User = req.body
@@ -14,7 +17,9 @@ const userApi = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(response.statusCode).json(response.message)
       }
       case 'GET': {
+        const response = await getCurrentUser(token)
 
+        return res.status(response.statusCode).json(response.message)
       }
       case 'PUT': {
 

@@ -1,34 +1,29 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { supabaseAuth } from '../../../supabaseClient'
+import { REQUEST_TYPE } from '../../utils/constants'
+import { destroyCookie } from 'nookies'
+import { getCurrentUser, registerNewUser } from '../../services/user'
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
   if (req.method != 'POST')
-    return res.status(401).json({ error: 'Invalid Request' })
+    return res.status(401).json({ error: 'Invalid Request 1' })
 
-  const { u, p, e } = req.body
+  const { email, password, event, name } = req.body
 
-  console.log(u, p, e)
-
-  if (!e)
-    return res.status(401).json({ error: 'Invalid Request' })
+  if (!event)
+    return res.status(401).json({ error: 'Invalid Request 2' })
 
   try {
-    let event = e.toString()
-
-    if (event === 'signin') {
-      if (!u || !p)
-        return res.status(401).json({ error: 'Invalid Request' })
-
-      let email = u.toString()
-      let password = p.toString()
+    if (event === REQUEST_TYPE.SIGN_IN) {
+      if (!email || !password)
+        return res.status(401).json({ error: 'Invalid Request 3' })
 
       const { data, error } = await supabaseAuth.auth.signInWithPassword({ email, password })
 
       console.log(data, error)
 
       if (error) {
-        console.log('errors', error)
         if (error.message === 'Invalid email or password')
           return res.status(401).json({ error: 'Usuário ou senha incorretos' })
         else if (error.message === 'Invalid login credentials')
@@ -39,19 +34,50 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           return res.status(401).json({ error: 'Oops... erro ao logar' })
       }
 
-      const info = {
-        data: data,
+      if (!data?.session?.access_token) {
+        return res.status(401).json({ error: 'Oops... erro ao logar' })
+      }
+
+
+      const user = await getCurrentUser(data?.session?.access_token)
+
+      const response = {
+        user: user.message,
+        token: data?.session?.access_token,
         error: null
       }
 
-      return res.status(200).json(info)
-    } else if (event == 'signout') {
-      supabaseAuth.auth.signOut()
+      return res.status(200).json(response)
+    }
+    if (event === REQUEST_TYPE.SIGN_UP) {
+      if (!email || !password) return res.status(401).json({ error: 'Invalid Request' })
 
+      let { data, error } = await supabaseAuth.auth.signUp({
+        email: email,
+        password: password
+      })
+      if (error) {
+        console.log('errors', error)
+        return res.status(401).json({ error: error.message })
+      }
+
+      const user = await registerNewUser({name, email})
+
+      const response = {
+        user: user.message,
+        token: data?.session?.access_token,
+        error: null
+      }
+
+      return res.status(200).json(response)
+    } else if (event == REQUEST_TYPE.SIGN_OUT) {
+      await supabaseAuth.auth.signOut()
+      destroyCookie(undefined, 'atlantis_token', {
+          path: "/",
+      })
       return res.status(200).json({})
     } else if (event === 'recover') {
-      if (!u) return res.status(401).json({ error: 'Invalid Request' })
-      let email = u.toString()
+      if (!email) return res.status(401).json({ error: 'Invalid Request' })
 
       const { data, error } = await supabaseAuth.auth.resetPasswordForEmail(email)
 
@@ -66,17 +92,14 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
 
       return res.status(200).json(info)
     } else if (event === 'reset') {
-      if (!p)
+      if (!password)
         return res.status(401).json({ error: 'Invalid Request' })
-
-      let email = u.toString()
-      let password = p.toString()
 
       const { data: loggedUser, error: userError } = await supabaseAuth.auth.signInWithPassword({ email, password })
 
       if (userError) return res.status(401).json({ error: userError.message })
 
-      const { data, error } = await supabaseAuth.auth.updateUser({email})
+      const { data, error } = await supabaseAuth.auth.updateUser({ email })
 
       if (error) {
         console.log('errors', error)

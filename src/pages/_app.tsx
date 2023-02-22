@@ -13,6 +13,8 @@ import { NewFishContextProvider } from '../contexts/NewFishContext'
 import icon from '../../public/icons/atlantis_icon_white.png'
 import MenuLayout from '../layouts/menuLayout'
 import { AuthContextProvider } from '../contexts/AuthContext'
+import { SessionProvider } from 'next-auth/react';
+
 
 type Page<P = Record<string, never>> = NextPage<P> & {
   Layout: (page: ScriptProps) => JSX.Element;
@@ -33,20 +35,22 @@ export default function App({ Component, pageProps }: Props) {
         <title>Atlantis</title>
         <link rel="shortcut icon" href="/icons/atlantis_icon_white.svg" />
       </Head>
-      <NewAquariumContextProvider>
-        <NewFishContextProvider>
-          <AuthContextProvider>
-            <Layout>
-              {pageLoading
-                ? <div className='flex w-full h-screen justify-center items-center'>
-                  <Image src={circleLoading} width="64" height="64" alt={''} />
-                </div>
-                : <Component {...pageProps} />
-              }
-            </Layout>
-          </AuthContextProvider>
-        </NewFishContextProvider>
-      </NewAquariumContextProvider>
+      <SessionProvider session={pageProps.session}>
+        <NewAquariumContextProvider>
+          <NewFishContextProvider>
+            <AuthContextProvider>
+              <Layout>
+                {pageLoading
+                  ? <div className='flex w-full h-screen justify-center items-center'>
+                    <Image src={circleLoading} width="64" height="64" alt={''} />
+                  </div>
+                  : <Component {...pageProps} />
+                }
+              </Layout>
+            </AuthContextProvider>
+          </NewFishContextProvider>
+        </NewAquariumContextProvider>
+      </SessionProvider>
       <div className='fixed -z-10 flex bottom-0 w-full h-8 bg-primary-light justify-center'>
         <Image width={40} src={icon} alt="Atlantis" />
       </div>

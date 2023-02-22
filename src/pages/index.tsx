@@ -2,8 +2,23 @@ import PrimaryButton from "../components/buttons/PrimaryButton"
 import Card from "../components/cards/CardBase"
 import MenuLayout from "../layouts/menuLayout"
 import Router from 'next/router'
+import { useAuthContext } from "../contexts/AuthContext"
+import { useEffect } from "react"
+import { parseCookies } from 'nookies'
 
 export default function Home() {
+  const {
+    setUser
+  } = useAuthContext()
+
+  useEffect(() => {
+    const { 'atlantis_token': token } = parseCookies()
+
+    if(!token){
+      setUser(null)
+    }
+  }, [])
+
   return (
     <div className="w-full h-screen flex items-center justify-center">
       <Card className="w-fit md:mx-28">

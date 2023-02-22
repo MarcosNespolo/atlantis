@@ -7,14 +7,14 @@ type ButtonProps = {
     className?: string
     text?: string
     icon?: string
-    onClick: () => void
+    onClick?: () => void
 }
 
 export default function TertiaryButton({
     id,
     className,
     text,
-    onClick,
+    onClick = () => {},
     icon
 }: ButtonProps) {
 
