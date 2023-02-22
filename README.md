@@ -34,8 +34,9 @@ npm install
 
 3 - Crie um arquivo .env.local na raiz do projeto com as variáveis de ambiente necessárias (enviadas por e-mail):
 ```
-NEXT_PUBLIC_SUPABASE_URL=https://seu-endereco-do-supabase.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=chave-publica-do-supabase
+SUPABASE_URL=https://seu-endereco-do-supabase.supabase.co
+SUPABASE_ANON_KEY=chave-publica-do-supabase
+SUPABASE_API_KEY=chave-privada-do-supabase
 ```
 
 4 - Execute a aplicação localmente:
