@@ -10,6 +10,7 @@ type InputTextProps = {
     onlyNumbers?: boolean
     isPassword?: boolean
     lines?: number
+    disabled?: boolean
     onChange?: (value: any) => void
     onClick?: () => void
 }
@@ -24,6 +25,7 @@ export default function InputText({
     onlyNumbers,
     isPassword = false,
     lines = 1,
+    disabled = false,
     onChange,
     onClick
 }: InputTextProps) {
@@ -55,10 +57,10 @@ export default function InputText({
                 rounded
                 flex flex-col
                 border border-1
-                bg-white
                 hover:border-[#84bed1]
                 focus-within:border-[#84bed1]
                 group
+                ${disabled ? 'bg-gray-100' : 'bg-white'}
                 ${className}
             `}
         >
@@ -86,6 +88,7 @@ export default function InputText({
                 {lines > 1
                     ? <textarea
                         id={idHtmlFor}
+                        disabled={disabled}
                         value={value}
                         rows={lines}
                         onChange={(e) => changeValue(e.target.value)}
@@ -102,6 +105,7 @@ export default function InputText({
                     />
                     : <input
                         id={idHtmlFor}
+                        disabled={disabled}
                         value={value}
                         type={isPassword ? 'password' : 'text'}
                         onChange={(e) => changeValue(e.target.value)}

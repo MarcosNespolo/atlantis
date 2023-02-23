@@ -88,3 +88,15 @@ export const REQUEST_TYPE = {
     SIGN_IN: 2,
     SIGN_OUT: 3,
 }
+
+export const USER_ROLE = {
+    AQUARIST: 1,
+    SPECIALIST: 2,
+    ADMINISTRATOR: 3,
+}
+
+export const USER_ROLE_MAP = new Map([
+    [USER_ROLE.AQUARIST, 'Aquarista'],
+    [USER_ROLE.SPECIALIST, 'Especialista'],
+    [USER_ROLE.ADMINISTRATOR, 'Admnistrador']
+])

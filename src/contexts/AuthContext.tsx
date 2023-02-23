@@ -27,6 +27,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
             recoverUserInformation().then(response => {
                 if (response.error) {
                     console.log(response.error)
+                    Router.push('/logout')
                 }
                 setUser(response.user)
             })

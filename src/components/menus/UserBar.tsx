@@ -18,6 +18,7 @@ function UserBar() {
   useEffect(() => {
     if (user) {
       setNavigation([
+        { name: user.name.split(' ')[0] ?? 'Perfil', href: '/user/' + user.user_id, icon: UserIcon },
         { name: 'Sair', href: '/logout', icon: ArrowRightOnRectangleIcon },
       ])
     } else {

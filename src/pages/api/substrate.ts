@@ -1,18 +1,36 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import createNewSubstrate from '../../services/substrate'
+import getToken from '../../services/getToken'
+import { createNewSubstrateService, listSubstrateService } from '../../services/substrate'
+import { getCurrentUser } from '../../services/user'
+import { USER_ROLE } from '../../utils/constants'
 import { Substrate } from '../../utils/types'
 
 const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
+    const token = await getToken(req)
+
+    if (!token) {
+      throw new Error("Sem permissão de acesso")
+    }
+
+    const currentUser = await getCurrentUser(token)
+
+    if (!currentUser || currentUser.data.role_id == USER_ROLE.AQUARIST) {
+      throw new Error("Sem permissão de acesso")
+    }
+
     switch (req.method) {
       case 'POST': {
         const substrate: Substrate = req.body
 
-        const response = await createNewSubstrate(substrate)
+        const response = await createNewSubstrateService(substrate)
 
-        return res.status(response.statusCode).json(response.message)
+        return res.status(response.statusCode).json(response.data)
       }
       case 'GET': {
+        const response = await listSubstrateService()
+
+        return res.status(response.statusCode).json(response.data)
 
       }
       case 'PUT': {
@@ -22,7 +40,7 @@ const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
 
       }
       default: {
-        return res.status(400).json("Requisição HTTP inválida")
+        throw new Error("Requisição HTTP inválida")
       }
     }
   } catch (error: any) {

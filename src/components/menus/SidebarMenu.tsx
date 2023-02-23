@@ -17,12 +17,12 @@ function SidebarMenu() {
   ]
 
   const specialistNavigation = [
-    { name: 'Alimentos', href: '/newFood', icon: GlobeAmericasIcon },
-    { name: 'Substratos', href: '/newSubstrate', icon: GlobeAmericasIcon },
+    { name: 'Alimentos', href: '/food', icon: GlobeAmericasIcon },
+    { name: 'Substratos', href: '/substrate', icon: GlobeAmericasIcon },
   ]
 
   const adminNavigation = [
-    { name: 'Usuários', href: '/dashboard/appearance', icon: GlobeAmericasIcon },
+    { name: 'Usuários', href: '/user', icon: GlobeAmericasIcon },
   ]
 
   const [navigation, setNavigation] = useState<any>([])

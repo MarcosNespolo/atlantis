@@ -9,6 +9,10 @@ import Water from "./steps/water"
 import Notes from "./steps/notes"
 import H1 from "../../components/texts/h1"
 import H2 from "../../components/texts/h2"
+import { GetServerSideProps } from "next"
+import { getCurrentUser } from "../../services/user"
+import { USER_ROLE } from "../../utils/constants"
+import { parseCookies } from 'nookies'
 
 type CardFishProps = {
     id?: string
@@ -91,4 +95,30 @@ export default function CardFish({
             </Card>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { ['atlantis_token']: token } = parseCookies(ctx)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
+    const currentUser = await getCurrentUser(token)
+
+    if (!currentUser || currentUser?.data?.role_id == USER_ROLE.AQUARIST) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+    
+    return { props: {} }
 }

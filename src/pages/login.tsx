@@ -1,5 +1,4 @@
 import { GetServerSideProps } from "next"
-import Router from "next/router"
 import React, { useState } from "react"
 import PrimaryButton from "../components/buttons/PrimaryButton"
 import TertiaryButton from "../components/buttons/TertiaryButton"
@@ -24,7 +23,6 @@ export default function Login() {
     const onFormSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
         if (!loading && login) {
-            console.log(email, password)
             const responseMessage = await login(email, password)
             if (responseMessage) {
                 setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })

@@ -42,7 +42,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       const user = await getCurrentUser(data?.session?.access_token)
 
       const response = {
-        user: user.message,
+        user: user.data,
         token: data?.session?.access_token,
         error: null
       }
@@ -64,7 +64,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
       const user = await registerNewUser({name, email})
 
       const response = {
-        user: user.message,
+        user: user.data,
         token: data?.session?.access_token,
         error: null
       }
@@ -76,42 +76,6 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
           path: "/",
       })
       return res.status(200).json({})
-    } else if (event === 'recover') {
-      if (!email) return res.status(401).json({ error: 'Invalid Request' })
-
-      const { data, error } = await supabaseAuth.auth.resetPasswordForEmail(email)
-
-      if (error) {
-        console.log('errors', error)
-        return res.status(401).json({ error: error.message })
-      }
-      const info = {
-        user: data,
-        error: null
-      }
-
-      return res.status(200).json(info)
-    } else if (event === 'reset') {
-      if (!password)
-        return res.status(401).json({ error: 'Invalid Request' })
-
-      const { data: loggedUser, error: userError } = await supabaseAuth.auth.signInWithPassword({ email, password })
-
-      if (userError) return res.status(401).json({ error: userError.message })
-
-      const { data, error } = await supabaseAuth.auth.updateUser({ email })
-
-      if (error) {
-        console.log('errors', error)
-        return res.status(401).json({ error: error.message })
-      }
-      const info = {
-        user: data,
-        error: null
-      }
-
-      return res.status(200).json(info)
-
     }
   } catch (error: any) {
     console.log('Error thrown:', error.error_description || error.message)

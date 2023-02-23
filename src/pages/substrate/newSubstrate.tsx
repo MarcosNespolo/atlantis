@@ -1,13 +1,17 @@
+import { GetServerSideProps } from "next"
+import Router from "next/router"
 import React, { useState } from "react"
-import PrimaryButton from "../components/buttons/PrimaryButton"
-import SecondaryButton from "../components/buttons/SecondaryButton"
-import Card from "../components/cards/CardBase"
-import InputText from "../components/inputs/InputText"
-import H1 from "../components/texts/h1"
-import { ALERT_MESSAGE_CODE } from "../utils/constants"
-import { AlertMessage } from "../utils/types"
+import PrimaryButton from "../../components/buttons/PrimaryButton"
+import SecondaryButton from "../../components/buttons/SecondaryButton"
+import Card from "../../components/cards/CardBase"
+import InputText from "../../components/inputs/InputText"
+import H1 from "../../components/texts/h1"
+import { getCurrentUser } from "../../services/user"
+import { ALERT_MESSAGE_CODE, USER_ROLE } from "../../utils/constants"
+import { AlertMessage } from "../../utils/types"
+import { parseCookies } from 'nookies'
 
-export default function NewFood() {
+export default function NewSubstrate() {
     const [name, setName] = useState<string>('')
     const [description, setDescription] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
@@ -15,18 +19,18 @@ export default function NewFood() {
 
     async function insertSubstrate() {
 
-        const food = {
+        const subustrate = {
             name,
             description
         }
 
         setLoading(true)
 
-        Promise.all([fetch('/api/food', {
+        Promise.all([fetch('/api/substrate', {
             method: 'POST',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin',
-            body: JSON.stringify(food)
+            body: JSON.stringify(subustrate)
         }).then(res => {
             if (res.status >= 400) {
                 console.log('Error na API:', res)
@@ -40,11 +44,11 @@ export default function NewFood() {
                     setLoading(false)
                     return false
                 } else {
-                    setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
+                    Router.push('/substrate')
                     setLoading(false)
                 }
             }
-            )]);
+            )])
     }
 
     return (
@@ -56,7 +60,7 @@ export default function NewFood() {
             >
                 <div className="flex flex-col sm:flex-row justify-between mb-4 sm:mb-8">
                     <H1 className={''}>
-                        Novo Alimento
+                        Novo Substrato
                     </H1>
                 </div>
 
@@ -79,7 +83,7 @@ export default function NewFood() {
                     <SecondaryButton
                         text={'Cancelar'}
                         className="w-full"
-                        onClick={() => { }}
+                        onClick={() => Router.push('/substrate')}
                     />
                     <PrimaryButton
                         text={'Salvar'}
@@ -90,4 +94,30 @@ export default function NewFood() {
             </Card>
         </div>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { ['atlantis_token']: token } = parseCookies(ctx)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
+    const currentUser = await getCurrentUser(token)
+
+    if (!currentUser || currentUser?.data?.role_id == USER_ROLE.AQUARIST) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+    
+    return { props: {} }
 }
