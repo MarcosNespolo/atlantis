@@ -1,3 +1,5 @@
+import { Fish } from "./types"
+
 export const NEW_AQUARIUM_STEP = {
     TYPE: 0,
     SIZE: 1,
@@ -12,10 +14,17 @@ export const AQUARIUM_PART = {
 }
 
 export const AQUARIUM_POSITION = {
-    TOP: 0,
-    MIDDLE: 1,
-    BOTTOM: 2
+    TOP: 1,
+    MIDDLE: 2,
+    BOTTOM: 3
 }
+
+
+export const AQUARIUM_POSITION_MAP = new Map([
+    [AQUARIUM_POSITION.TOP, 'Topo'],
+    [AQUARIUM_POSITION.MIDDLE, 'Meio'],
+    [AQUARIUM_POSITION.BOTTOM, 'Fundo'],
+])
 
 export const SUBSTRATE = {
     SEM_SUBSTRATO: 0,
@@ -59,6 +68,20 @@ export const TEMPERAMENT_NAME = [
     'Agressivo com maiores de outras espécies'
 ]
 
+export const TEMPERAMENT_SAME = new Map([
+    [TEMPERAMENT.PEACEFUL, 'Pacífico com a mesma espécie'],
+    [TEMPERAMENT.TERRITORIAL, 'Territorialista com a mesma espécie'],
+    [TEMPERAMENT.TERRITORIAL_TO_FEMALES, 'Territorialista para fêmeas da mesma espécie'],
+    [TEMPERAMENT.TERRITORIAL_TO_MALES, 'Territorialista para machos da mesma espécie'],
+])
+
+export const TEMPERAMENT_OTHERS = new Map([
+    [TEMPERAMENT.PEACEFUL_OTHERS, 'Pacífico com outras espécies'],
+    [TEMPERAMENT.TERRITORIAL_OTHERS, 'Territorialista com outras espécies'],
+    [TEMPERAMENT.AGGRESSIVE_TO_SMALLER, 'Agressivo com menores de outras espécies'],
+    [TEMPERAMENT.AGGRESSIVE_TO_LARGER, 'Agressivo com maiores de outras espécies'],
+])
+
 export const FOOD = {
     PASTILHA: 0,
     GRANULADA: 1,
@@ -100,3 +123,28 @@ export const USER_ROLE_MAP = new Map([
     [USER_ROLE.SPECIALIST, 'Especialista'],
     [USER_ROLE.ADMINISTRATOR, 'Admnistrador']
 ])
+
+export const FISH_DEFAULT: Fish = {
+    id: 0,
+    name: "",
+    image: "",
+    nameEn: "",
+    scientificName: "",
+    minimumShoal: 0,
+    position: 0,
+    substrates: null,
+    temperamentSame: 0,
+    temperamentOthers: 0,
+    food: null,
+    size: 0,
+    aquariumWidth: [null, null],
+    aquariumHeight: [null, null],
+    volumeFirst: 0,
+    volumeAdditional: 0,
+    temperature: [0, 33],
+    ph: [0, 14],
+    dgh: [0, 30],
+    salinity: [0, 33],
+    note: "",
+    specialist: null
+}

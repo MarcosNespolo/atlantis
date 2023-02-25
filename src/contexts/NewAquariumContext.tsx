@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { AQUARIUM_PART, AQUARIUM_POSITION, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD } from "../utils/constants"
-import {Fish, Aquarium} from "../utils/types"
+import { AQUARIUM_PART, AQUARIUM_POSITION, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD, FISH_DEFAULT } from "../utils/constants"
+import { Fish, Aquarium, Food, Substrate } from "../utils/types"
 
 type NewAquariumContextProviderProps = {
   children: ReactNode
@@ -16,6 +16,11 @@ type NewAquariumContextType = {
   aquarium: Aquarium
   aquariums: AquariumType[]
   fishes: Fish[]
+  setFishes: (fishes: Fish[]) => void
+  food: Food[]
+  setFood: (food: Food[]) => void
+  substrate: Substrate[]
+  setSubstrate: (substrate: Substrate[]) => void
   currentStep: number
   setCurrentStep: (currentStep: number) => void
   aquariumPartSelected: number
@@ -28,7 +33,7 @@ type NewAquariumContextType = {
   setAquariumLength: (aquariumLength: string) => void
   aquariumWater: string
   setAquariumWater: (aquariumWater: string) => void
-  updateFishQuantity: (fishId: string, quantityUpdate: number) => void
+  updateFishQuantity: (fishId: number, quantityUpdate: number) => void
 }
 
 export function NewAquariumContextProvider({ children }: NewAquariumContextProviderProps) {
@@ -88,107 +93,9 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
       description: 'Peixes marinhos.'
     }
   ])
-  const [fishes, setFishes] = useState<Fish[]>([
-    {
-      id: '32a8cbad-c0be-4f14-b57b-a19effe7a590',
-      name: 'Betta',
-      nameEn: 'Fighting fish',
-      image: 'https://en.aqua-fish.net/imgs/fish/betta-fish-profile.jpg',
-      scientificName: 'Betta splendens',
-      minimumShoal: 1,
-      position: AQUARIUM_POSITION.TOP,
-      substrates: [SUBSTRATE.AREIA, SUBSTRATE.CASCALHO],
-      temperamentSame: TEMPERAMENT.TERRITORIAL_TO_MALES,
-      temperamentOthers: TEMPERAMENT.PEACEFUL_OTHERS,
-      food: [FOOD.ARTEMIA, FOOD.FLOCO, FOOD.GRANULADA],
-      size: 7,
-      aquariumWidth: [15, null],
-      aquariumHeight: [30, 40],
-      volumeFirst: 18,
-      volumeAdditional: 18,
-      temperature: [23, 30],
-      ph: [6.2, 7.9],
-      dgh: [4, 25],
-      salinity: [0, 6],
-      note: [
-        'Um Betta vive em média de dois a cinco anos.',
-        'O Betta macho pode ser agressivo com espécies mais agitadas.'
-      ],
-      quantity: 0
-    },
-    {
-      id: 'aaad8714-458b-4483-b603-c4a87430a90c',
-      name: 'Acará-azul',
-      nameEn: 'Blue Acara',
-      image: 'https://en.aqua-fish.net/imgs/fish/blue-acara-1.jpg',
-      scientificName: 'Aequidens pulcher',
-      minimumShoal: 1,
-      position: AQUARIUM_POSITION.MIDDLE,
-      substrates: [SUBSTRATE.AREIA, SUBSTRATE.CASCALHO],
-      temperamentSame: TEMPERAMENT.PEACEFUL,
-      temperamentOthers: TEMPERAMENT.TERRITORIAL_OTHERS,
-      food: [FOOD.ARTEMIA, FOOD.FLOCO, FOOD.GRANULADA],
-      size: 20,
-      aquariumWidth: [21, null],
-      aquariumHeight: [15, 30],
-      volumeFirst: 18,
-      volumeAdditional: 18,
-      temperature: [18, 23],
-      ph: [6.5, 8],
-      dgh: [4, 25],
-      salinity: [0, 6],
-      note: [],
-      quantity: 0
-    },
-    {
-      id: 'aaad8714-458b-4483-b603-c4a87430a90c3123',
-      name: 'Tricogaster azul',
-      nameEn: 'Blue gourami',
-      image: 'https://en.aqua-fish.net/imgs/fish/gourami-profile.jpg',
-      scientificName: 'Trichogaster trichopterus',
-      minimumShoal: 1,
-      position: AQUARIUM_POSITION.TOP,
-      substrates: [SUBSTRATE.AREIA, SUBSTRATE.CASCALHO],
-      temperamentSame: TEMPERAMENT.PEACEFUL,
-      temperamentOthers: TEMPERAMENT.AGGRESSIVE_TO_SMALLER,
-      food: [FOOD.ARTEMIA, FOOD.FLOCO, FOOD.GRANULADA],
-      size: 12,
-      aquariumWidth: [21, null],
-      aquariumHeight: [15, 30],
-      volumeFirst: 24,
-      volumeAdditional: 15,
-      temperature: [22, 28],
-      ph: [6, 8],
-      dgh: [4, 18],
-      salinity: [0, 6],
-      note: [],
-      quantity: 0
-    },
-    {
-      id: 'aaad8714-458b-4483-b603-c4a87430a90cfsdf',
-      name: 'Cascudo Verde',
-      nameEn: 'Lemon spotted green pleco',
-      image: 'https://en.aqua-fish.net/imgs/fish0/lemon-spotted-green-pleco-profile.jpg',
-      scientificName: 'Hemiancistrus subviridis',
-      minimumShoal: 1,
-      position: AQUARIUM_POSITION.TOP,
-      substrates: [SUBSTRATE.AREIA, SUBSTRATE.CASCALHO],
-      temperamentSame: TEMPERAMENT.PEACEFUL,
-      temperamentOthers: TEMPERAMENT.AGGRESSIVE_TO_SMALLER,
-      food: [FOOD.ARTEMIA, FOOD.FLOCO, FOOD.GRANULADA],
-      size: 12,
-      aquariumWidth: [21, null],
-      aquariumHeight: [15, 30],
-      volumeFirst: 24,
-      volumeAdditional: 15,
-      temperature: [22, 28],
-      ph: [6, 8],
-      dgh: [4, 18],
-      salinity: [0, 6],
-      note: [],
-      quantity: 0
-    }
-  ])
+  const [fishes, setFishes] = useState<Fish[]>([])
+  const [food, setFood] = useState<Food[]>([])
+  const [substrate, setSubstrate] = useState<Substrate[]>([])
 
   function calculateFilter(aquariumVolume: number) {
     return aquariumVolume * 5
@@ -315,7 +222,7 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
     return height
   }
 
-  function updateFishQuantity(fishId: string, quantityUpdate: number) {
+  function updateFishQuantity(fishId: number, quantityUpdate: number) {
 
     const fishUpdated = fishes.filter(fish => fish.id == fishId).map(fish => {
       if (fish.quantity != undefined && fish.quantity + quantityUpdate >= 0) {
@@ -380,6 +287,7 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
     <NewAquariumContext.Provider
       value={{
         fishes,
+        setFishes,
         aquarium,
         currentStep,
         setCurrentStep,
@@ -394,7 +302,11 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
         setAquariumLength,
         aquariumWater,
         setAquariumWater,
-        updateFishQuantity
+        updateFishQuantity,
+        food,
+        setFood,
+        substrate,
+        setSubstrate
       }}>
       {children}
     </NewAquariumContext.Provider>

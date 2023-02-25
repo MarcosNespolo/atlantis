@@ -68,7 +68,7 @@ export default function Substrate() {
                 />
             </div>
             <div className="h-fit w-full">
-                <Table header={tableHeader} content={tableContent} />
+                <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/substrate/'} />
             </div>
         </div>
     )

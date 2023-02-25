@@ -9,7 +9,7 @@ type CardProps = {
     bgFish?: boolean
     darkTheme?: boolean
     invisibleCard?: boolean
-    alertMessage?: AlertMessage
+    alertMessage?: AlertMessage | null
 }
 
 export default function Card({

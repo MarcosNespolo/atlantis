@@ -19,7 +19,7 @@ export default function InputText({
     id,
     name,
     className,
-    value,
+    value = '',
     label,
     complementText,
     onlyNumbers,
@@ -78,8 +78,8 @@ export default function InputText({
                     group-focus-within:pt-0
                     group-focus-within:pl-0
                     group-focus-within:text-[#84bed1]
-                    ${(value && value?.toString().length > 0) ? 'text-xs' : 'text-md'}
-                    ${(value && value?.toString().length > 0) ? 'pt-0 pl-0' : 'pt-2.5 pl-2'}
+                    ${(value.toString() != '') ? 'text-xs' : 'text-md'}
+                    ${(value.toString() != '') ? 'pt-0 pl-0' : 'pt-2.5 pl-2'}
                 `}
             >
                 {label}
@@ -135,7 +135,7 @@ export default function InputText({
                             group-hover:text-[#84bed1]
                             group-focus-within:text-[#84bed1]
                             group-focus-within:visible
-                            ${(value && value?.toString().length > 0) ? 'visible' : 'invisible'}
+                            ${(value.toString() != '') ? 'visible' : 'invisible'}
                         `}
                     >
                         {complementText}

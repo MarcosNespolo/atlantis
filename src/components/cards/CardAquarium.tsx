@@ -9,7 +9,7 @@ type CardProps = {
     aquarium: Aquarium
     className?: string
     darkTheme?: boolean
-    onUpdateFishQuantity?: (fishId: string, quantityUpdate: number) => void
+    onUpdateFishQuantity?: (fishId: number, quantityUpdate: number) => void
 }
 
 export default function CardAquarium({

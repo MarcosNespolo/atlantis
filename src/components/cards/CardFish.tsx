@@ -1,7 +1,7 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { AQUARIUM_POSITION, FOOD_NAME, SUBSTRATE_NAME, TEMPERAMENT, TEMPERAMENT_NAME } from "../../utils/constants"
-import { Fish } from "../../utils/types"
+import { Fish, Food, Substrate } from "../../utils/types"
 import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
@@ -12,7 +12,7 @@ type CardProps = {
     className?: string
     minicard?: boolean
     darkTheme?: boolean
-    onUpdateFishQuantity?: (fishId: string, quantityUpdate: number) => void
+    onUpdateFishQuantity?: (fishId: number, quantityUpdate: number) => void
 }
 
 export default function CardFish({
@@ -127,32 +127,34 @@ export default function CardFish({
                             </div>
                         </div>
                         <div className={`flex flex-row w-full ${minicard ? 'gap-4' : 'gap-6'} mt-4`}>
-                            <div className="flex flex-col w-44 gap-0.5">
-                                <span className="text-sm font-semibold whitespace-nowrap">Substratos indicados </span>
-                                <span className="flex flex-col">
-                                    {fish.substrates.map((substrate, index) => (
-                                        index + 1 < fish.substrates.length
-                                            ? SUBSTRATE_NAME[substrate] + ', '
-                                            : SUBSTRATE_NAME[substrate]
-                                    ))}
-                                </span>
-                            </div>
-                            <div className="flex flex-col w-full gap-0.5">
-                                <span className="text-sm font-semibold">Rações indicadas</span>
-                                <span className="flex flex-col">
-                                    {fish.food.map((food, index) => (
-                                        index + 1 < fish.food.length
-                                            ? FOOD_NAME[food] + ', '
-                                            : FOOD_NAME[food]
-                                    ))}
-                                </span>
-                            </div>
+                            {fish?.substrates && fish?.substrates.length > 0 &&
+                                <div className="flex flex-col w-full gap-0.5">
+                                    <span className="text-sm font-semibold whitespace-nowrap">Substratos indicados </span>
+                                    <span className="flex flex-col">
+                                        {fish?.substrates.map((substrate: Substrate, index) => (
+                                            substrate && fish?.substrates && index + 1 < fish?.substrates.length
+                                                ? <> {substrate.name + ', '}</>
+                                                : <> {substrate.name}</>
+                                        ))}
+                                    </span>
+                                </div>
+                            }
+                            {fish?.food && fish?.food.length > 0 &&
+                                <div className="flex flex-col w-full gap-0.5">
+                                    <span className="text-sm font-semibold">Rações indicadas</span>
+                                    <span className="flex flex-col">
+                                        {fish?.food.map((food: Food, index) => (
+                                            food && fish?.food && index + 1 < fish?.food.length
+                                                ? <> {food.name + ', '}</>
+                                                : <> {food.name}</>
+                                        ))}
+                                    </span>
+                                </div>
+                            }
                         </div>
                         {fish.note && fish.note.length > 0 &&
                             <span className="flex flex-col gap-1 mt-4">
-                                {fish.note.map((note, index) => (
-                                    <span key={index}>{note}</span>
-                                ))}
+                                {fish.note}
                             </span>
                         }
                     </div>
@@ -191,6 +193,7 @@ export default function CardFish({
                         w-full 
                         p-2 
                         pt-3 
+                        mr-2
                         cursor-pointer 
                         select-none 
                         rounded-b-md
@@ -209,16 +212,17 @@ export default function CardFish({
                 <div
                     className="
                         w-fit
-                        mx-2 
                         flex flex-row
                         items-center
+                        bg-gray-400/20
+                        rounded-lg
                     "
                 >
-                    <PrimaryButton icon={'minus'} className="h-6" onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, -1)} />
-                    <span className="px-3 w-10">
+                    <PrimaryButton icon={'minus'} className={'rounded-r-none'} onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, -1)} />
+                    <span className="flex items-center justify-center h-10 w-10 shadow-inner text-primary-dark">
                         {fish.quantity}
                     </span>
-                    <PrimaryButton icon={'plus'} className="h-6" onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, +1)} />
+                    <PrimaryButton icon={'plus'} onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, +1)} />
                 </div>
             </div>
         </Card>

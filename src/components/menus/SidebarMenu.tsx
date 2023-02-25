@@ -12,11 +12,11 @@ function SidebarMenu() {
   } = useAuthContext()
 
   const defaultNavigation = [
-    { name: 'Aquários', href: '/newAquarium', icon: GlobeAmericasIcon },
-    // { name: 'Espécies', href: '/newFish', icon: GlobeAmericasIcon },
+    { name: 'Aquário', href: '/newAquarium', icon: GlobeAmericasIcon },
   ]
 
   const specialistNavigation = [
+    { name: 'Espécies', href: '/fish', icon: GlobeAmericasIcon },
     { name: 'Alimentos', href: '/food', icon: GlobeAmericasIcon },
     { name: 'Substratos', href: '/substrate', icon: GlobeAmericasIcon },
   ]

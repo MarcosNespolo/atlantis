@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
-import { UserIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import { UserIcon, ArrowRightOnRectangleIcon, GlobeAmericasIcon } from '@heroicons/react/24/outline'
 import { useAuthContext } from '../../contexts/AuthContext'
 
 function UserBar() {
@@ -18,7 +18,8 @@ function UserBar() {
   useEffect(() => {
     if (user) {
       setNavigation([
-        { name: user.name.split(' ')[0] ?? 'Perfil', href: '/user/' + user.user_id, icon: UserIcon },
+        { name: 'Meus Aquários', href: '/aquariums', icon: GlobeAmericasIcon },
+        { name: 'Perfil', href: '/user/' + user.user_id, icon: UserIcon },
         { name: 'Sair', href: '/logout', icon: ArrowRightOnRectangleIcon },
       ])
     } else {

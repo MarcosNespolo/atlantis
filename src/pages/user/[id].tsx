@@ -38,12 +38,12 @@ export default function NewSubstrate({ userProps }: any) {
         }).then(res => {
             if (res.status >= 400) {
                 console.log('Error na API:', res)
+                return {error: res}
             }
             return res.json();
         })
             .then(result => {
                 setLoading(false)
-                console.log(result)
                 if (result?.hasOwnProperty('error')) {
                     console.log('Error na API:', result.error)
                     setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
@@ -68,7 +68,8 @@ export default function NewSubstrate({ userProps }: any) {
                     </H1>
                     {user?.role_id &&
                         <InputSelect
-                            className="w-fit"
+                            label={'Perfil'}
+                            className="w-full mt-2 sm:w-40 sm:mt-0"
                             selected={user?.role_id?.toString()}
                             list={Array.from(USER_ROLE_MAP, ([value, option]) => ({ value, option }))}
                             onChange={(newRole) => user && setUser({ ...user, role_id: +newRole })}
@@ -101,7 +102,7 @@ export default function NewSubstrate({ userProps }: any) {
                         label={'Descrição'}
                         className={'col-span-1 sm:col-span-2'}
                         value={user?.description ?? ''}
-                        lines={2}
+                        lines={4}
                         onChange={(newDescription) => user && setUser({ ...user, description: newDescription })}
                     />
                 </div>

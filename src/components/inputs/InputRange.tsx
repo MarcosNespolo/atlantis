@@ -42,7 +42,7 @@ type InputRangeProps = {
     label?: string
     step?: number
     disabled?: boolean
-    onChange?: (value: string) => void
+    onChange?: (value: number[]) => void
     onClick?: () => void
 }
 
@@ -59,24 +59,15 @@ export default function InputRange({
     onClick
 }: InputRangeProps) {
     const [idHtmlFor, setIdHtmlFor] = useState<string>(id ? id : getIdRandom())
-    const [temperatura, setTemperatura] = useState([0, 30]);
 
     function getIdRandom() {
         return Math.random().toString().split('.')[1]
     }
 
-    function getOnlyNumbers(val: string) {
-        return val.replace(/\D/g, '')
-    }
-
-    function changeValue(value: string) {
+    const handleSliderTempChange = (event: any, value: number | number[]) => {
         if (onChange) {
-            onChange(value)
+            onChange(typeof value == 'number' ? [value] : value)
         }
-    }
-
-    const handleSliderTempChange = (event: any, value: any) => {
-        setTemperatura(value);
     };
 
     return (

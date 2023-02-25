@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { createNewFoodService, listFoodsService } from '../../services/food'
+import { createNewFoodService, listFoodsService, updateFoodService } from '../../services/food'
 import getToken from '../../services/getToken'
 import { getCurrentUser } from '../../services/user'
 import { USER_ROLE } from '../../utils/constants'
@@ -33,10 +33,11 @@ const foodApi = async (req: NextApiRequest, res: NextApiResponse) => {
         return res.status(response.statusCode).json(response.data)
       }
       case 'PUT': {
+        const food: Food = req.body
 
-      }
-      case 'DELETE': {
+        const response = await updateFoodService(food)
 
+        return res.status(response.statusCode).json(response.data)
       }
       default: {
         throw new Error("Requisição HTTP inválida")

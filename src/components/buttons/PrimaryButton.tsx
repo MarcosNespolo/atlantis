@@ -30,7 +30,7 @@ export default function PrimaryButton({
             onClick={onClick}
             disabled={disabled}
             className={
-                `h-12 
+                `h-10 
                 px-3
                 rounded
                 bg-gradient-to-br from-primary via-action-1 to-action-2

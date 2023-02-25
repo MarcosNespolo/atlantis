@@ -32,7 +32,7 @@ function Table({ header, content, pathToEdit = '/', onClick = () => { } }: Table
                     <tr
                         key={indexLine}
                         onClick={() => onClick(pathToEdit + line[0].text)}
-                        className={'hover:bg-gray-50'}>
+                        className={'hover:bg-gray-50'}>                            
                         {line && line.map((cell, indexCell) => (
                             <td
                                 key={indexCell}

@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { createNewFishService, listFishesService, updateFishService } from '../../services/fish'
 import getToken from '../../services/getToken'
-import { createNewSubstrateService, listSubstrateService, updateSubstrateService } from '../../services/substrate'
 import { getCurrentUser } from '../../services/user'
 import { USER_ROLE } from '../../utils/constants'
-import { Substrate } from '../../utils/types'
+import { Fish } from '../../utils/types'
 
-const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
+const fishApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const token = await getToken(req)
 
@@ -21,27 +21,23 @@ const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
 
     switch (req.method) {
       case 'POST': {
-        const substrate: Substrate = req.body
+        const fish: Fish = req.body
 
-        const response = await createNewSubstrateService(substrate)
+        const response = await createNewFishService(fish, currentUser.data.user_id)
 
         return res.status(response.statusCode).json(response.data)
       }
       case 'GET': {
-        const response = await listSubstrateService()
+        const response = await listFishesService()
 
         return res.status(response.statusCode).json(response.data)
-
       }
       case 'PUT': {
-        const substrate: Substrate = req.body
+        const fish: Fish = req.body
 
-        const response = await updateSubstrateService(substrate)
+        const response = await updateFishService(fish, currentUser.data.user_id)
 
         return res.status(response.statusCode).json(response.data)
-      }
-      case 'DELETE': {
-
       }
       default: {
         throw new Error("Requisição HTTP inválida")
@@ -53,4 +49,4 @@ const substrateApi = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 }
 
-export default substrateApi
+export default fishApi

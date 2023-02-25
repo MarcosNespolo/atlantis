@@ -3,24 +3,27 @@ import Router from "next/router"
 import React, { useEffect, useState } from "react"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import Table, { TableContentProps } from "../../components/tables/Table"
-import { ALERT_MESSAGE_CODE, USER_ROLE } from "../../utils/constants"
-import { AlertMessage } from "../../utils/types"
+import { ALERT_MESSAGE_CODE, TEMPERAMENT_OTHERS, TEMPERAMENT_SAME, USER_ROLE } from "../../utils/constants"
+import { AlertMessage, Fish } from "../../utils/types"
 import { parseCookies } from 'nookies'
 import { getCurrentUser } from "../../services/user"
 
-export default function Foods() {
+export default function Species() {
     const [tableHeader, setTableHeader] = useState<string[]>([
         'ID',
         'Nome',
-        'Descrição'
+        'Nome ciêntífico',
+        'pH',
+        'Temperatura (ºC)',
+        'Temperamento'
     ])
     const [tableContent, setTableContent] = useState<TableContentProps[][]>()
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
 
-    async function getFoods() {
+    async function getFishes() {
 
-        Promise.all([fetch('/api/food', {
+        Promise.all([fetch('/api/fish', {
             method: 'GET',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin'
@@ -39,11 +42,14 @@ export default function Foods() {
                 } else {
                     console.log(result)
                     setTableContent(
-                        result.map((content: any) => {
+                        result.map((content: Fish) => {
                             return [
-                                { text: content.food_id },
-                                { text: content.name },
-                                { text: content.description }
+                                { text: content.id },
+                                { text: content.name + ', ' + content.nameEn },
+                                { text: content.scientificName },
+                                { text: Math.min(...content.ph) + ' - ' + Math.max(...content.ph) },
+                                { text: Math.min(...content.temperature) + ' - ' + Math.max(...content.temperature) },,
+                                { text: TEMPERAMENT_OTHERS.get(content.temperamentOthers) + ', ' + TEMPERAMENT_SAME.get(content.temperamentSame) }
                             ]
                         })
                     )
@@ -56,7 +62,7 @@ export default function Foods() {
     }
 
     useEffect(() => {
-        getFoods()
+        getFishes()
     }, [])
 
     return (
@@ -64,12 +70,12 @@ export default function Foods() {
             <div className="w-full flex">
                 <PrimaryButton
                     className="w-fit ml-auto"
-                    text={'+ Novo alimento'}
-                    onClick={() => Router.push('/food/newFood')}
+                    text={'+ Nova espécie'}
+                    onClick={() => Router.push('/fish/newFish')}
                 />
             </div>
             <div className="h-fit w-full">
-                <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/food/'} />
+                <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/fish/'} />
             </div>
         </div>
     )
@@ -97,6 +103,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             }
         }
     }
-    
+
     return { props: {} }
 }
