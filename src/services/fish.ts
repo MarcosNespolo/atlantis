@@ -129,7 +129,7 @@ function prepareFishBD(fish: Fish, user_id: number) {
     return fishBD
 }
 
-function prepareResponseFish(fishBD: FishBD) {
+export function prepareResponseFish(fishBD: FishBD) {
 
     let fish_substrates: Substrate[] | null = null
     let fish_food: Substrate[] | null = null
@@ -164,7 +164,8 @@ function prepareResponseFish(fishBD: FishBD) {
         dgh: [fishBD.dgh_min, fishBD.dgh_max],
         salinity: [fishBD.salinity_min, fishBD.salinity_max],
         note: fishBD.note,
-        specialist: fishBD.specialist
+        specialist: fishBD.specialist ?? null,
+        quantity: fishBD.quantity ?? 1
     }
 
     return fish

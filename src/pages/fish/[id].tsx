@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next"
 import Router from "next/router"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, ChangeEvent } from "react"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import SecondaryButton from "../../components/buttons/SecondaryButton"
 import Card from "../../components/cards/CardBase"
@@ -16,13 +16,17 @@ import InputSelect from "../../components/inputs/InputSelect"
 import { listFoodsService } from "../../services/food"
 import { listSubstrateService } from "../../services/substrate"
 import InputRange from "../../components/inputs/InputRange"
+import ImageButton from "../../components/buttons/ImageButton"
+import { uploadImage } from "../../utils/imagesControler"
 
 export default function EditFood({ fishProps, foodProps, substrateProps }: any) {
     const [fish, setFish] = useState<Fish>()
     const [food, setFood] = useState<Food[]>()
     const [substrate, setSubstrate] = useState<Substrate[]>()
     const [loading, setLoading] = useState<boolean>(false)
+    const [loadingLogo, setLoadingLogo] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
+    const [imageURL, setImageUrl] = useState<string>()
 
     useEffect(() => {
         console.log(fishProps)
@@ -67,8 +71,26 @@ export default function EditFood({ fishProps, foodProps, substrateProps }: any) 
         )])
     }
 
+    async function uploadImageFish(event: ChangeEvent<HTMLInputElement>) {
+        if (!event.target.files || event.target.files.length == 0) {
+            throw 'Selecione uma imagem para enviar.'
+        }
+
+        let file = event.target.files[0]
+        const filename = `${file.name.split('.')[0]}${Math.random()}`.replace(/[^A-z0-9]+/g, '') + '.' + file.name.split('.')?.pop()?.toLowerCase()
+
+        console.log(filename)
+
+        fish && setFish({ ...fish, image: filename })
+        setImageUrl(URL.createObjectURL(file))
+
+        const response = uploadImage(file, filename, 'fish')
+
+        console.log(response)
+    }
+
     return (
-        <div className="flex h-screen w-full py-8">
+        <div className="flex h-screen w-full md:pl-24">
             <Card
                 darkTheme={false}
                 className={`w-full max-w-2xl m-auto py-4 px-6 sm:py-8 sm:px-10`}
@@ -83,6 +105,13 @@ export default function EditFood({ fishProps, foodProps, substrateProps }: any) 
                     <H2 className={'col-span-1 sm:col-span-2 mt-2'}>
                         Identificação
                     </H2>
+                    <ImageButton
+                        image={imageURL}
+                        name={fish?.name}
+                        onUpload={(e) => uploadImageFish(e)}
+                        loading={loadingLogo}
+                        className={'col-span-1 sm:col-span-2 w-full sm:mx-auto'}
+                    />
                     <InputText
                         label={'Nome'}
                         className={'col-span-1'}

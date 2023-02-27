@@ -4,24 +4,25 @@ import React, { useEffect, useState } from "react"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import Table, { TableContentProps } from "../../components/tables/Table"
 import { ALERT_MESSAGE_CODE, USER_ROLE } from "../../utils/constants"
-import { AlertMessage } from "../../utils/types"
+import { AlertMessage, Aquarium } from "../../utils/types"
 import { parseCookies } from 'nookies'
 import { getCurrentUser } from "../../services/user"
 import Image from "next/image"
 
-export default function Foods() {
+export default function Aquariums() {
     const [tableHeader, setTableHeader] = useState<string[]>([
         'ID',
         'Nome',
-        'Descrição'
+        'Peixes'
     ])
     const [tableContent, setTableContent] = useState<TableContentProps[][]>()
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
 
-    async function getFoods() {
+    async function getAquariums() {
         setLoading(true)
-        Promise.all([fetch('/api/food', {
+
+        Promise.all([fetch('/api/aquarium', {
             method: 'GET',
             headers: new Headers({ 'Content-Type': 'application/json' }),
             credentials: 'same-origin'
@@ -30,33 +31,37 @@ export default function Foods() {
                 console.log('Error na API:', res)
             }
             return res.json();
-        })
-            .then(result => {
-                setLoading(false)
-                if (result.hasOwnProperty('error')) {
-                    console.log('Error na API:', result.error)
-                    setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
-                    return false
-                } else {
-                    console.log(result)
-                    setTableContent(
-                        result.map((content: any) => {
-                            return [
-                                { text: content.food_id },
-                                { text: content.name },
-                                { text: content.description }
-                            ]
-                        })
-                    )
-                    setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
-                }
+        }).then(result => {
+            setLoading(false)
+            if (result.hasOwnProperty('error')) {
+                console.log('Error na API:', result.error)
+                setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
+                return false
+            } else {
+                console.log(result)
+                setTableContent(
+                    result.map((content: Aquarium) => {
+                        return [
+                            { text: content.aquarium_id },
+                            { text: content.name ?? '-' },
+                            {
+                                text: content.fishes.map(
+                                    (fish, index) =>
+                                        index + 1 < content.fishes.length
+                                            ? fish.name + ','
+                                            : fish.name
+                                ) ?? '-'
+                            },
+                        ]
+                    })
+                )
+                setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
             }
-            )
-        ])
+        })])
     }
 
     useEffect(() => {
-        getFoods()
+        getAquariums()
     }, [])
 
     return (
@@ -70,12 +75,12 @@ export default function Foods() {
                     <div className="w-full flex">
                         <PrimaryButton
                             className="w-fit ml-auto"
-                            text={'+ Novo alimento'}
-                            onClick={() => Router.push('/food/newFood')}
+                            text={'+ Novo Aquário'}
+                            onClick={() => Router.push('/newAquarium')}
                         />
                     </div>
                     <div className="h-fit w-full">
-                        <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/food/'} />
+                        <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/aquarium/'} />
                     </div>
                 </>
             }

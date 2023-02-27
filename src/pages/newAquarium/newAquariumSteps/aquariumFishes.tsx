@@ -6,7 +6,7 @@ export default function AquariumFishes() {
     const {
         fishes,
         aquarium,
-        updateFishQuantity
+        updateAquarium
     } = useNewAquariumContext();
 
     return (
@@ -16,14 +16,14 @@ export default function AquariumFishes() {
                     <CardFish
                         key={index}
                         fish={fish}
-                        onUpdateFishQuantity={updateFishQuantity}
+                        onUpdateFishQuantity={updateAquarium}
                     />
                 ))}
             </div>
             <CardAquarium
                 aquarium={aquarium}
                 className="absolute w-96 top-12 right-10"
-                onUpdateFishQuantity={updateFishQuantity}
+                onUpdateFishQuantity={updateAquarium}
             />
         </>
     )

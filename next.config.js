@@ -11,6 +11,10 @@ const nextConfig = {
 
     return config;
   },
+  serverRuntimeConfig: {
+    // Define o tamanho máximo do corpo da requisição em bytes.
+    maxBodySize: '10mb',
+  },
 }
 
 module.exports = nextConfig

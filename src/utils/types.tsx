@@ -54,19 +54,22 @@ export type FishBD = {
     food?: Food | null
     substrate?: Substrate | null
     note: string
+    quantity?: number
     specialist?: User | null
     specialist_id?: number | null
 }
 
 export type Aquarium = {
-    id: string
+    aquarium_id?: number
+    name?: string
+    created?: string
     width: (number | null)[]
     height: (number | null)[]
     volume: number
-    temperature: number[]
-    ph: number[]
-    dgh: number[]
-    salinity: number[]
+    temperature: (number | null)[]
+    ph: (number | null)[]
+    dgh:(number | null)[]
+    salinity: (number | null)[]
     filter: number
     thermostat: number
     fishes: Fish[]
@@ -99,4 +102,17 @@ export type User = {
     description?: string
     link?: string
     role_id?: number
+}
+
+export type AquariumBD = {
+    aquarium_id?: number
+    name?: string
+    created_at?: any
+    user_id: number
+}
+
+export type AquariumFishBD = {
+    aquarium_id: number
+    fish_id: number
+    quantity: number
 }

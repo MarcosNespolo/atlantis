@@ -1,7 +1,8 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid"
+import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import { AQUARIUM_POSITION, FOOD_NAME, SUBSTRATE_NAME, TEMPERAMENT, TEMPERAMENT_NAME } from "../../utils/constants"
-import { Fish, Food, Substrate } from "../../utils/types"
+import { Aquarium, Fish, Food, Substrate } from "../../utils/types"
 import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
@@ -9,6 +10,7 @@ import Card from "./CardBase"
 type CardProps = {
     id?: string
     fish: Fish
+    aquarium?: Aquarium
     className?: string
     minicard?: boolean
     darkTheme?: boolean
@@ -18,6 +20,7 @@ type CardProps = {
 export default function CardFish({
     id,
     fish,
+    aquarium,
     className,
     minicard,
     darkTheme,
@@ -46,12 +49,12 @@ export default function CardFish({
                     {!minicard &&
                         <div className="flex flex-col mt-4">
                             <div className={`flex w-full flex-row gap-8`}>
-                                <InputRange interval={[0, 33]} value={fish.temperature} className="w-full" label='Temperatura' disabled />
-                                <InputRange interval={[0, 14]} value={fish.ph} step={0.1} className="w-full" label='pH' disabled />
+                                <InputRange interval={[0, 33]} value={fish.temperature} valueComparison={aquarium?.temperature} className="w-full" label='Temperatura' disabled />
+                                <InputRange interval={[0, 14]} value={fish.ph} valueComparison={aquarium?.ph} step={0.1} className="w-full" label='pH' disabled />
                             </div>
                             <div className={`flex w-full flex-row gap-8`}>
-                                <InputRange interval={[0, 33]} value={fish.salinity} className="w-full" label='Salinidade' disabled />
-                                <InputRange interval={[0, 30]} value={fish.dgh} className="w-full" label='dGH' disabled />
+                                <InputRange interval={[0, 33]} value={fish.salinity} valueComparison={aquarium?.salinity} className="w-full" label='Salinidade' disabled />
+                                <InputRange interval={[0, 30]} value={fish.dgh} valueComparison={aquarium?.dgh} className="w-full" label='dGH' disabled />
                             </div>
                         </div>
 
@@ -75,18 +78,18 @@ export default function CardFish({
                     <div className="flex flex-col mb-2">
                         {minicard &&
                             <div className="flex flex-col">
-                                <div className={`flex w-full flex-row gap-6`}>
-                                    <InputRange interval={[0, 33]} value={fish.temperature} className="w-full" label='Temperatura' disabled />
-                                    <InputRange interval={[0, 14]} value={fish.ph} step={0.1} className="w-full" label='pH' disabled />
+                                <div className={`flex w-full flex-col sm:flex-row sm:gap-6`}>
+                                    <InputRange interval={[0, 33]} value={fish.temperature} valueComparison={aquarium?.temperature} className="w-full" label='Temperatura' disabled />
+                                    <InputRange interval={[0, 14]} value={fish.ph} valueComparison={aquarium?.ph} step={0.1} className="w-full" label='pH' disabled />
                                 </div>
-                                <div className={`flex w-full flex-row gap-6`}>
-                                    <InputRange interval={[0, 33]} value={fish.salinity} className="w-full" label='Salinidade' disabled />
-                                    <InputRange interval={[0, 30]} value={fish.dgh} className="w-full" label='dGH' disabled />
+                                <div className={`flex w-full flex-col sm:flex-row sm:gap-6`}>
+                                    <InputRange interval={[0, 33]} value={fish.salinity} valueComparison={aquarium?.salinity} className="w-full" label='Salinidade' disabled />
+                                    <InputRange interval={[0, 30]} value={fish.dgh} valueComparison={aquarium?.dgh} className="w-full" label='dGH' disabled />
                                 </div>
                             </div>
 
                         }
-                        <div className={`flex flex-row w-full ${minicard ? 'gap-5' : 'gap-7'}`}>
+                        <div className={`flex flex-row w-full mt-2 ${minicard ? 'gap-5' : 'gap-7'}`}>
                             <div className="flex flex-col">
                                 <span className="font-semibold text-sm whitespace-nowrap">
                                     Posição no aquário
@@ -133,8 +136,8 @@ export default function CardFish({
                                     <span className="flex flex-col">
                                         {fish?.substrates.map((substrate: Substrate, index) => (
                                             substrate && fish?.substrates && index + 1 < fish?.substrates.length
-                                                ? <> {substrate.name + ', '}</>
-                                                : <> {substrate.name}</>
+                                                ? substrate.name + ', '
+                                                : substrate.name
                                         ))}
                                     </span>
                                 </div>
@@ -145,17 +148,31 @@ export default function CardFish({
                                     <span className="flex flex-col">
                                         {fish?.food.map((food: Food, index) => (
                                             food && fish?.food && index + 1 < fish?.food.length
-                                                ? <> {food.name + ', '}</>
-                                                : <> {food.name}</>
+                                                ? food.name + ', '
+                                                : food.name
                                         ))}
                                     </span>
                                 </div>
                             }
                         </div>
-                        {fish.note && fish.note.length > 0 &&
-                            <span className="flex flex-col gap-1 mt-4">
-                                {fish.note}
-                            </span>
+                        {fish.note &&
+                            <>
+                                <span className="text-sm font-semibold mt-4">Observações</span>
+                                <span className="flex flex-col gap-1">
+                                    {fish.note}
+                                </span>
+                            </>
+                        }
+                        {fish?.specialist?.name &&
+                            <Link
+                                className="mt-4 mb-2 w-fit"
+                                target={'_blank'}
+                                href={'/profile/' + fish?.specialist?.user_id}
+                            >
+                                <span className="font-semibold text-action-1 hover:text-action-2">
+                                    {'Atualizado por ' + fish?.specialist?.name}
+                                </span>
+                            </Link>
                         }
                     </div>
                 }

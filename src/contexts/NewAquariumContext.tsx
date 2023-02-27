@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react"
-import { AQUARIUM_PART, AQUARIUM_POSITION, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD, FISH_DEFAULT } from "../utils/constants"
-import { Fish, Aquarium, Food, Substrate } from "../utils/types"
+import { updateAquariumParameters, updateFishQuantity } from "../utils/aquariumControler"
+import { AQUARIUM_PART, ALERT_MESSAGE_CODE, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD, FISH_DEFAULT, AQUARIUM_DEFAULT } from "../utils/constants"
+import { Fish, Aquarium, Food, Substrate, AlertMessage } from "../utils/types"
 
 type NewAquariumContextProviderProps = {
   children: ReactNode
@@ -14,6 +15,7 @@ type AquariumType = {
 
 type NewAquariumContextType = {
   aquarium: Aquarium
+  setAquarium: (aquarium: Aquarium) => void
   aquariums: AquariumType[]
   fishes: Fish[]
   setFishes: (fishes: Fish[]) => void
@@ -33,7 +35,9 @@ type NewAquariumContextType = {
   setAquariumLength: (aquariumLength: string) => void
   aquariumWater: string
   setAquariumWater: (aquariumWater: string) => void
-  updateFishQuantity: (fishId: number, quantityUpdate: number) => void
+  updateAquarium: (fishId: number, quantityUpdate: number) => void
+  saveAquarium: () => Promise<AlertMessage>
+  loadAquarium: (aquariumLoaded: Aquarium, fishesLoaded: Fish[]) => void
 }
 
 export function NewAquariumContextProvider({ children }: NewAquariumContextProviderProps) {
@@ -43,19 +47,7 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
   const [aquariumWidth, setAquariumWidth] = useState<string>('')
   const [aquariumLength, setAquariumLength] = useState<string>('')
   const [aquariumWater, setAquariumWater] = useState<string>('')
-  const [aquarium, setAquarium] = useState<Aquarium>({
-    id: '0',
-    width: [0, 0],
-    height: [0, 0],
-    volume: 0,
-    temperature: [0, 0],
-    ph: [0, 0],
-    dgh: [0, 0],
-    salinity: [0, 0],
-    filter: 0,
-    thermostat: 0,
-    fishes: []
-  })
+  const [aquarium, setAquarium] = useState<Aquarium>(AQUARIUM_DEFAULT)
   const [aquariums, setAquariums] = useState<AquariumType[]>([
     {
       image: '/aquariums/comunitario.jpg',
@@ -96,191 +88,50 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
   const [fishes, setFishes] = useState<Fish[]>([])
   const [food, setFood] = useState<Food[]>([])
   const [substrate, setSubstrate] = useState<Substrate[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
-  function calculateFilter(aquariumVolume: number) {
-    return aquariumVolume * 5
+  function updateAquarium(fishId: number, quantityUpdate: number) {
+    const { fishUpdated, aquariumUpdated } = updateFishQuantity(fishId, quantityUpdate, fishes, aquarium)
+
+    fishUpdated && setFishes(prevState => prevState.map((fish: Fish) => fish.id == fishUpdated.id ? fishUpdated : fish))
+    aquariumUpdated && setAquarium(aquariumUpdated)
   }
 
-  function calculateThermostat(aquariumVolume: number) {
-    return aquariumVolume
-  }
-
-  function calculateVolume(fishes: Fish[]) {
-    return fishes.reduce((volume: number, fish: Fish) => {
-      if (fish.quantity == undefined) {
-        return volume
-      }
-      if (fish.quantity > 1) {
-        return volume + fish.volumeFirst + ((fish.quantity - 1) * fish.volumeAdditional)
-      }
-      if (fish.quantity == 1) {
-        return volume + fish.volumeFirst
-      }
-      return volume
-    }, 0)
-  }
-
-  function calculateTemperature(fishes: Fish[]) {
-    let temperature = [0, 90]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.temperature == undefined) {
-        return
-      }
-      if (fish.temperature[0] > temperature[0]) {
-        temperature[0] = fish.temperature[0]
-      }
-      if (fish.temperature[1] < temperature[1]) {
-        temperature[1] = fish.temperature[1]
-      }
-    }, 0)
-
-    return temperature
-  }
-
-  function calculatePh(fishes: Fish[]) {
-    let ph = [0, 14]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.ph == undefined) {
-        return
-      }
-      if (fish.ph[0] > ph[0]) {
-        ph[0] = fish.ph[0]
-      }
-      if (fish.ph[1] < ph[1]) {
-        ph[1] = fish.ph[1]
-      }
-    }, 0)
-
-    return ph
-  }
-
-  function calculateSalinity(fishes: Fish[]) {
-    let salinity = [0, 33]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.salinity == undefined) {
-        return
-      }
-      if (fish.salinity[0] > salinity[0]) {
-        salinity[0] = fish.salinity[0]
-      }
-      if (fish.salinity[1] < salinity[1]) {
-        salinity[1] = fish.salinity[1]
-      }
-    }, 0)
-
-    return salinity
-  }
-
-  function calculateDgh(fishes: Fish[]) {
-    let dgh = [0, 33]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.dgh == undefined) {
-        return
-      }
-      if (fish.dgh[0] > dgh[0]) {
-        dgh[0] = fish.dgh[0]
-      }
-      if (fish.dgh[1] < dgh[1]) {
-        dgh[1] = fish.dgh[1]
-      }
-    }, 0)
-
-    return dgh
-  }
-
-  function calculateWidth(fishes: Fish[]) {
-    let width: number[] | null[] = [null, null]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.aquariumWidth[0] && (width[0] == null || fish.aquariumWidth[0] < width[0])) {
-        width[0] = fish.aquariumWidth[0]
-      }
-      if (fish.aquariumWidth[1] && (width[1] == null || fish.aquariumWidth[1] > width[1])) {
-        width[1] = fish.aquariumWidth[1]
-      }
-    }, 0)
-
-    return width
-  }
-
-  function calculateHeight(fishes: Fish[]) {
-    let height: number[] | null[] = [null, null]
-
-    fishes.forEach((fish: Fish) => {
-      if (fish.aquariumHeight[0] && (height[0] == null || fish.aquariumHeight[0] < height[0])) {
-        height[0] = fish.aquariumHeight[0]
-      }
-      if (fish.aquariumHeight[1] && (height[1] == null || fish.aquariumHeight[1] < height[1])) {
-        height[1] = fish.aquariumHeight[1]
-      }
-    }, 0)
-
-    return height
-  }
-
-  function updateFishQuantity(fishId: number, quantityUpdate: number) {
-
-    const fishUpdated = fishes.filter(fish => fish.id == fishId).map(fish => {
-      if (fish.quantity != undefined && fish.quantity + quantityUpdate >= 0) {
-        return { ...fish, quantity: fish.quantity + quantityUpdate }
-      }
-    })[0]
-
-    if (fishUpdated == undefined) {
-      return
-    }
-
-    setFishes(prevFishes =>
-      prevFishes.map(fish =>
-        fish.id == fishId
-          ? fishUpdated
-          : fish
-      )
+  function loadAquarium(aquariumLoaded: Aquarium, fishesLoaded: Fish[]) {
+    const fishesUpdated = fishesLoaded.map((fishDefault: Fish) =>
+      aquariumLoaded.fishes.find(fishAquarium => fishDefault.id == fishAquarium.id) ?? { ...fishDefault, quantity: 0 }
     )
-    updateAquarium(fishUpdated)
+    setFishes(fishesUpdated)
+
+    setAquarium(updateAquariumParameters(aquariumLoaded, fishesUpdated.filter(fish => fish.quantity != 0)))
   }
 
-  function updateAquariumFishes(fishUpdated: Fish): Fish[] {
-    if (fishUpdated.quantity == undefined || fishUpdated.quantity <= 0) {
-      return aquarium.fishes.filter(aquariumFish =>
-        aquariumFish.id != fishUpdated.id
-      )
+  async function saveAquarium() {
+    setLoading(true)
+
+    const message = await Promise.all([fetch('/api/aquarium', {
+      method: 'POST',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+      credentials: 'same-origin',
+      body: JSON.stringify(aquarium)
+    }).then(res => {
+      return res.json()
+    }).then(result => {
+      setLoading(false)
+      console.log(result)
+      if (result?.hasOwnProperty('error') || !result?.aquarium) {
+        console.log('Error na API:', result.error)
+        return { message: result.error, code: ALERT_MESSAGE_CODE.DANGER }
+      } else {
+        setAquarium(result.aquarium)
+        return { message: result?.message, code: result?.code }
+      }
     }
+    )])
 
-    if (!aquarium.fishes.find(aquariumFish => aquariumFish.id == fishUpdated.id)) {
-      return [...aquarium.fishes, fishUpdated]
-    }
+    console.log(message[0])
 
-    return aquarium.fishes.map(aquariumFish =>
-      aquariumFish.id == fishUpdated.id
-        ? fishUpdated
-        : aquariumFish
-    )
-  }
-
-  function updateAquarium(fishUpdated: Fish) {
-    const fishesUpdated = updateAquariumFishes(fishUpdated)
-    const volumeUpdated = calculateVolume(fishesUpdated)
-
-    const aquariumUpdated: Aquarium = {
-      ...aquarium,
-      volume: volumeUpdated,
-      temperature: calculateTemperature(fishesUpdated),
-      ph: calculatePh(fishesUpdated),
-      salinity: calculateSalinity(fishesUpdated),
-      dgh: calculateDgh(fishesUpdated),
-      filter: calculateFilter(volumeUpdated),
-      thermostat: calculateThermostat(volumeUpdated),
-      width: calculateWidth(fishesUpdated),
-      height: calculateHeight(fishesUpdated),
-      fishes: fishesUpdated
-    }
-
-    setAquarium(aquariumUpdated)
+    return message[0]
   }
 
   return (
@@ -289,6 +140,7 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
         fishes,
         setFishes,
         aquarium,
+        setAquarium,
         currentStep,
         setCurrentStep,
         aquariums,
@@ -302,11 +154,13 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
         setAquariumLength,
         aquariumWater,
         setAquariumWater,
-        updateFishQuantity,
+        updateAquarium,
         food,
         setFood,
         substrate,
-        setSubstrate
+        setSubstrate,
+        saveAquarium,
+        loadAquarium
       }}>
       {children}
     </NewAquariumContext.Provider>

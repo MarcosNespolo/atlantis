@@ -7,6 +7,7 @@ import { ALERT_MESSAGE_CODE, USER_ROLE } from "../../utils/constants"
 import { AlertMessage } from "../../utils/types"
 import { parseCookies } from 'nookies'
 import { getCurrentUser } from "../../services/user"
+import Image from "next/image"
 
 export default function Substrate() {
     const [tableHeader, setTableHeader] = useState<string[]>([
@@ -19,7 +20,7 @@ export default function Substrate() {
     const [message, setMessage] = useState<AlertMessage>()
 
     async function getSubstrates() {
-
+        setLoading(true)
         Promise.all([fetch('/api/substrate', {
             method: 'GET',
             headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -31,13 +32,12 @@ export default function Substrate() {
             return res.json();
         })
             .then(result => {
+                setLoading(false)
                 if (result.hasOwnProperty('error')) {
                     console.log('Error na API:', result.error)
                     setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
-                    setLoading(false)
                     return false
                 } else {
-                    console.log(result)
                     result && setTableContent(
                         result.map((content: any) => {
                             return [
@@ -48,7 +48,6 @@ export default function Substrate() {
                         })
                     )
                     setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
-                    setLoading(false)
                 }
             }
             )]);
@@ -60,16 +59,24 @@ export default function Substrate() {
 
     return (
         <div className="flex flex-col gap-4 h-screen w-full px-4 md:pl-28 pt-4">
-            <div className="w-full flex">
-                <PrimaryButton
-                    className="w-fit ml-auto"
-                    text={'+ Novo substrato'}
-                    onClick={() => Router.push('/substrate/newSubstrate')}
-                />
-            </div>
-            <div className="h-fit w-full">
-                <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/substrate/'} />
-            </div>
+            {loading
+                ?
+                <div className="h-full w-full flex items-center justify-center">
+                    <Image src={'/circleLoading.svg'} width="64" height="64" alt={''} />
+                </div>
+                : <>
+                    <div className="w-full flex">
+                        <PrimaryButton
+                            className="w-fit ml-auto"
+                            text={'+ Novo substrato'}
+                            onClick={() => Router.push('/substrate/newSubstrate')}
+                        />
+                    </div>
+                    <div className="h-fit w-full">
+                        <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/substrate/'} />
+                    </div>
+                </>
+            }
         </div>
     )
 }
@@ -96,6 +103,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
             }
         }
     }
-    
+
     return { props: {} }
 }

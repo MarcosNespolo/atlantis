@@ -18,7 +18,7 @@ function UserBar() {
   useEffect(() => {
     if (user) {
       setNavigation([
-        { name: 'Meus Aquários', href: '/aquariums', icon: GlobeAmericasIcon },
+        { name: 'Meus Aquários', href: '/aquarium', icon: GlobeAmericasIcon },
         { name: 'Perfil', href: '/user/' + user.user_id, icon: UserIcon },
         { name: 'Sair', href: '/logout', icon: ArrowRightOnRectangleIcon },
       ])

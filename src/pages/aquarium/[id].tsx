@@ -1,41 +1,49 @@
+import { GetServerSideProps } from "next"
+import Router from "next/router"
+import React, { useEffect, useState } from "react"
+import { getCurrentUser } from "../../services/user"
+import { USER_ROLE } from "../../utils/constants"
+import { AlertMessage, Aquarium, Fish, Food, Substrate } from "../../utils/types"
+import { parseCookies } from 'nookies'
+import { listFoodsService } from "../../services/food"
+import { listSubstrateService } from "../../services/substrate"
+import { listFishesService } from "../../services/fish"
+import { getAquariumService } from "../../services/aquarium"
 import { useNewAquariumContext } from "../../contexts/NewAquariumContext"
 import CardFish from "../../components/cards/CardFish"
-import CardAquarium from "../../components/cards/CardAquarium";
-import Image from "next/image";
-import { GetServerSideProps } from "next";
-import { listFishesService } from "../../services/fish";
-import { Fish, Food, Substrate } from "../../utils/types";
-import { useEffect } from "react";
-import { listFoodsService } from "../../services/food";
-import { listSubstrateService } from "../../services/substrate";
-import { AQUARIUM_DEFAULT } from "../../utils/constants";
+import CardAquarium from "../../components/cards/CardAquarium"
+import Image from "next/image"
 
-
-type NewAquariumProps = {
+type EditAquariumProps = {
+    aquariumProps: Aquarium,
     fishesProps: Fish[],
     foodProps: Food[],
     substrateProps: Substrate[],
     error: string
 }
 
-export default function NewAquarium({ fishesProps, foodProps, substrateProps, error }: NewAquariumProps) {
+export default function EditAquarium({ aquariumProps, fishesProps, foodProps, substrateProps, error }: EditAquariumProps) {
     const {
         aquarium,
         updateAquarium,
         fishes,
-        setFishes,
-        setAquarium,
         setFood,
         setSubstrate,
-        saveAquarium
+        saveAquarium,
+        loadAquarium
     } = useNewAquariumContext()
 
+    const [loading, setLoading] = useState<boolean>(false)
+    const [message, setMessage] = useState<AlertMessage>()
+
     useEffect(() => {
+        console.log(aquariumProps)
         if (!error) {
-            setFishes(fishesProps.map(fish => { return { ...fish, quantity: 0 } }))
-            setFood(foodProps)
-            setSubstrate(substrateProps)
-            setAquarium(AQUARIUM_DEFAULT)
+            loadAquarium(aquariumProps, fishesProps)
+            foodProps && setFood(foodProps)
+            substrateProps && setSubstrate(substrateProps)
+        } else {
+            Router.push('/aquarium')
         }
     }, [])
 
@@ -78,19 +86,73 @@ export default function NewAquarium({ fishesProps, foodProps, substrateProps, er
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
+    const { ['atlantis_token']: token } = parseCookies(ctx)
 
-    const response = await listFishesService()
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
+    const currentUser = await getCurrentUser(token)
+
+    if (!currentUser?.data?.role_id) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
+    if (currentUser?.data?.role_id != USER_ROLE.SPECIALIST && currentUser?.data?.role_id != USER_ROLE.ADMINISTRATOR) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            }
+        }
+    }
+
+    if (!ctx?.params?.id || typeof ctx.params.id != 'string') {
+        return {
+            redirect: {
+                destination: '/food',
+                permanent: false,
+            }
+        }
+    }
+
+    const id = ctx.params.id
+    const response = await getAquariumService(id)
     let error = null
+
+    console.log(response)
 
     if (response.statusCode != 200) {
         error = 'Algo deu errado, tente novamente mais tarde.'
     }
+
+    const fishes = await listFishesService()
     const food = await listFoodsService()
     const substrate = await listSubstrateService()
 
+    if (food?.statusCode != 200) {
+        return {
+            redirect: {
+                destination: '/aquarium',
+                permanent: false,
+            }
+        }
+    }
+
     return {
         props: {
-            fishesProps: response.data,
+            aquariumProps: response.data,
+            fishesProps: fishes.data,
             foodProps: food.data,
             substrateProps: substrate.data,
             error: error

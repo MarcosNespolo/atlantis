@@ -10,6 +10,7 @@ type CardProps = {
     darkTheme?: boolean
     invisibleCard?: boolean
     alertMessage?: AlertMessage | null
+    onCloseMessage?: () => void
 }
 
 export default function Card({
@@ -19,7 +20,8 @@ export default function Card({
     bgFish,
     darkTheme,
     invisibleCard,
-    alertMessage
+    alertMessage,
+    onCloseMessage
 }: CardProps) {
     return (
         <div
@@ -30,17 +32,23 @@ export default function Card({
                 flex flex-col
                 rounded-md 
                 backdrop-filter backdrop-blur
-                ${!invisibleCard 
-                    && 'border border-1 border-gray-200'
+                ${!invisibleCard
+                && 'border border-1 border-gray-200'
                 }
-                ${bgFish 
-                ? 'bg-fish-opacity bg-center bg-contain bg-no-repeat'
-                : 'bg-gradient-to-br'
+                ${bgFish
+                    ? 'bg-fish-opacity bg-center bg-contain bg-no-repeat'
+                    : 'bg-gradient-to-br'
                 }
                 ${darkTheme ? 'from-bg-black/30 to-transparent text-white' : 'from-white/80 via-white/80 to-white/10 text-gray-700'}
                 ${className}
             `}>
-            {alertMessage && <CardMessage message={alertMessage.message} code={alertMessage.code} />}
+            {alertMessage &&
+                <CardMessage
+                    message={alertMessage.message}
+                    code={alertMessage.code}
+                    onCloseMessage={onCloseMessage}
+                />
+            }
             {children}
         </div>
     )

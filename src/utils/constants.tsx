@@ -1,4 +1,4 @@
-import { Fish } from "./types"
+import { Aquarium, Fish } from "./types"
 
 export const NEW_AQUARIUM_STEP = {
     TYPE: 0,
@@ -147,4 +147,28 @@ export const FISH_DEFAULT: Fish = {
     salinity: [0, 33],
     note: "",
     specialist: null
+}
+
+export const ERROR_MESSAGE = {
+    DEFAULT: 'Ops, algo deu errado. Tente novamente mais tarde.'
+}
+
+export const AQUARIUM_DEFAULT_PARAMETERS = {
+    TEMPERATURE: [0, 33],
+    PH: [0, 14],
+    SALINITY: [0, 33],
+    DGH: [0, 30]
+}
+
+export const AQUARIUM_DEFAULT: Aquarium = {
+    width: [0, 0],
+    height: [0, 0],
+    volume: 0,
+    temperature: AQUARIUM_DEFAULT_PARAMETERS.TEMPERATURE,
+    ph: AQUARIUM_DEFAULT_PARAMETERS.PH,
+    salinity: AQUARIUM_DEFAULT_PARAMETERS.SALINITY,
+    dgh: AQUARIUM_DEFAULT_PARAMETERS.DGH,
+    filter: 0,
+    thermostat: 0,
+    fishes: []
 }

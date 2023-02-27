@@ -1,5 +1,7 @@
-import React from "react"
-import { Aquarium, Fish } from "../../utils/types"
+import React, { useEffect, useState } from "react"
+import { AQUARIUM_DEFAULT_PARAMETERS } from "../../utils/constants"
+import { AlertMessage, Aquarium, Fish } from "../../utils/types"
+import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
 import CardFish from "./CardFish"
@@ -10,6 +12,7 @@ type CardProps = {
     className?: string
     darkTheme?: boolean
     onUpdateFishQuantity?: (fishId: number, quantityUpdate: number) => void
+    onClickToSave?: () => Promise<AlertMessage>
 }
 
 export default function CardAquarium({
@@ -17,22 +20,55 @@ export default function CardAquarium({
     aquarium,
     className,
     darkTheme,
-    onUpdateFishQuantity
+    onUpdateFishQuantity,
+    onClickToSave
 }: CardProps) {
+    const [message, setMessage] = useState<AlertMessage | null>()
+    const [temperature, setTemperature] = useState<number[]>(AQUARIUM_DEFAULT_PARAMETERS.TEMPERATURE)
+    const [ph, setPh] = useState<number[]>(AQUARIUM_DEFAULT_PARAMETERS.PH)
+    const [salinity, setSalinity] = useState<number[]>(AQUARIUM_DEFAULT_PARAMETERS.SALINITY)
+    const [dgh, setDgh] = useState<number[]>(AQUARIUM_DEFAULT_PARAMETERS.DGH)
+
+    useEffect(() => {
+        if (aquarium?.temperature?.length == 2 && typeof aquarium?.temperature[0] == 'number' && typeof aquarium?.temperature[1] == 'number') {
+            setTemperature([aquarium.temperature[0], aquarium.temperature[1]])
+        } else {
+            setTemperature(AQUARIUM_DEFAULT_PARAMETERS.TEMPERATURE)
+        }
+        if (aquarium?.ph?.length == 2 && typeof aquarium?.ph[0] == 'number' && typeof aquarium?.ph[1] == 'number') {
+            setPh([aquarium.ph[0], aquarium.ph[1]])
+        } else {
+            setPh(AQUARIUM_DEFAULT_PARAMETERS.PH)
+        }
+        if (aquarium?.salinity?.length == 2 && typeof aquarium?.salinity[0] == 'number' && typeof aquarium?.salinity[1] == 'number') {
+            setSalinity([aquarium.salinity[0], aquarium.salinity[1]])
+        } else {
+            setSalinity(AQUARIUM_DEFAULT_PARAMETERS.SALINITY)
+        }
+        if (aquarium?.dgh?.length == 2 && typeof aquarium?.dgh[0] == 'number' && typeof aquarium?.dgh[1] == 'number') {
+            setDgh([aquarium.dgh[0], aquarium.dgh[1]])
+        } else {
+            setDgh(AQUARIUM_DEFAULT_PARAMETERS.DGH)
+        }
+
+    }, [aquarium])
+
     return (
         <Card
             id={id}
+            alertMessage={message}
+            onCloseMessage={() => setMessage(null)}
             darkTheme={darkTheme}
             className={className + ' py-2 px-4'}
         >
-            <span className="mx-auto text-xl mb-6">Aquário</span>
-            <div className="flex flex-col w-full 2xl:flex-row 2xl:gap-8">
-                <InputRange interval={[0, 33]} value={aquarium.temperature} className="w-full" label='Temperatura' disabled />
-                <InputRange interval={[0, 14]} value={aquarium.ph} step={0.1} className="w-full" label='pH' disabled />
+            <span className="mx-auto text-xl mt-4 mb-6">Aquário</span>
+            <div className="flex flex-col w-full sm:flex-row sm:gap-8">
+                <InputRange interval={AQUARIUM_DEFAULT_PARAMETERS.TEMPERATURE} value={temperature} className="w-full" label='Temperatura' disabled />
+                <InputRange interval={AQUARIUM_DEFAULT_PARAMETERS.PH} value={ph} step={0.1} className="w-full" label='pH' disabled />
             </div>
-            <div className="flex flex-col w-full 2xl:flex-row 2xl:gap-8">
-                <InputRange interval={[0, 33]} value={aquarium.salinity} className="w-full" label='Salinidade' disabled />
-                <InputRange interval={[0, 30]} value={aquarium.dgh} className="w-full" label='dGH' disabled />
+            <div className="flex flex-col w-full sm:flex-row sm:gap-8">
+                <InputRange interval={AQUARIUM_DEFAULT_PARAMETERS.SALINITY} value={salinity} className="w-full" label='Salinidade' disabled />
+                <InputRange interval={AQUARIUM_DEFAULT_PARAMETERS.DGH} value={dgh} className="w-full" label='dGH' disabled />
             </div>
             <div className="flex flex-col w-full gap-2">
                 <div className="flex flex-row">
@@ -80,10 +116,20 @@ export default function CardAquarium({
                         key={index}
                         fish={fish}
                         onUpdateFishQuantity={onUpdateFishQuantity}
+                        aquarium={aquarium}
                         minicard
                     />
                 ))}
             </div>
+            <PrimaryButton
+                text="Salvar"
+                className="mt-2"
+                disabled={aquarium.fishes.length < 1}
+                onClick={() => onClickToSave
+                    ? onClickToSave().then((response: AlertMessage) => setMessage(response))
+                    : () => { }
+                }
+            />
         </Card>
     )
 }

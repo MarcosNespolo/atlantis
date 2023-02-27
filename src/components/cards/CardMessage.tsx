@@ -1,13 +1,20 @@
 import { XMarkIcon } from "@heroicons/react/24/outline"
 import { useEffect, useState } from "react"
 import { ALERT_MESSAGE_CODE } from "../../utils/constants"
-import { AlertMessage } from "../../utils/types"
 
-export default function CardMessage({ message, code }: AlertMessage) {
+type AlertMessageProps = {
+    code: number
+    message: string
+    onCloseMessage?: () => void
+}
+
+export default function CardMessage({ message, code, onCloseMessage }: AlertMessageProps) {
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
     useEffect(() => {
-        setIsOpen(true)
+        if (message) {
+            setIsOpen(true)
+        }
     }, [message])
 
     if (!isOpen) {
@@ -28,7 +35,7 @@ export default function CardMessage({ message, code }: AlertMessage) {
         >
             {message}
             <div
-                onClick={() => setIsOpen(false)}
+                onClick={() => {setIsOpen(false); onCloseMessage && onCloseMessage()}}
                 className={`
                     w-fit h-fit p-1 bg-transparent cursor-pointer rounded-tr-md hover:shadow-inner
                     ${code == ALERT_MESSAGE_CODE.SUCCESS

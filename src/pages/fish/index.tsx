@@ -7,6 +7,7 @@ import { ALERT_MESSAGE_CODE, TEMPERAMENT_OTHERS, TEMPERAMENT_SAME, USER_ROLE } f
 import { AlertMessage, Fish } from "../../utils/types"
 import { parseCookies } from 'nookies'
 import { getCurrentUser } from "../../services/user"
+import Image from "next/image"
 
 export default function Species() {
     const [tableHeader, setTableHeader] = useState<string[]>([
@@ -22,6 +23,7 @@ export default function Species() {
     const [message, setMessage] = useState<AlertMessage>()
 
     async function getFishes() {
+        setLoading(true)
 
         Promise.all([fetch('/api/fish', {
             method: 'GET',
@@ -32,32 +34,29 @@ export default function Species() {
                 console.log('Error na API:', res)
             }
             return res.json();
-        })
-            .then(result => {
-                if (result.hasOwnProperty('error')) {
-                    console.log('Error na API:', result.error)
-                    setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
-                    setLoading(false)
-                    return false
-                } else {
-                    console.log(result)
-                    setTableContent(
-                        result.map((content: Fish) => {
-                            return [
-                                { text: content.id },
-                                { text: content.name + ', ' + content.nameEn },
-                                { text: content.scientificName },
-                                { text: Math.min(...content.ph) + ' - ' + Math.max(...content.ph) },
-                                { text: Math.min(...content.temperature) + ' - ' + Math.max(...content.temperature) },,
-                                { text: TEMPERAMENT_OTHERS.get(content.temperamentOthers) + ', ' + TEMPERAMENT_SAME.get(content.temperamentSame) }
-                            ]
-                        })
-                    )
-                    setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
-                    setLoading(false)
-                }
+        }).then(result => {
+            setLoading(false)
+            if (result.hasOwnProperty('error')) {
+                console.log('Error na API:', result.error)
+                setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
+                return false
+            } else {
+                setTableContent(
+                    result.map((content: Fish) => {
+                        return [
+                            { text: content.id },
+                            { text: content.name + ', ' + content.nameEn },
+                            { text: content.scientificName },
+                            { text: Math.min(...content.ph) + ' - ' + Math.max(...content.ph) },
+                            { text: Math.min(...content.temperature) + ' - ' + Math.max(...content.temperature) }, ,
+                            { text: TEMPERAMENT_OTHERS.get(content.temperamentOthers) + ', ' + TEMPERAMENT_SAME.get(content.temperamentSame) }
+                        ]
+                    })
+                )
+                setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
             }
-            )
+        }
+        )
         ])
     }
 
@@ -67,16 +66,24 @@ export default function Species() {
 
     return (
         <div className="flex flex-col gap-4 h-screen w-full px-4 md:pl-28 pt-4">
-            <div className="w-full flex">
-                <PrimaryButton
-                    className="w-fit ml-auto"
-                    text={'+ Nova espécie'}
-                    onClick={() => Router.push('/fish/newFish')}
-                />
-            </div>
-            <div className="h-fit w-full">
-                <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/fish/'} />
-            </div>
+            {loading
+                ?
+                <div className="h-full w-full flex items-center justify-center">
+                    <Image src={'/circleLoading.svg'} width="64" height="64" alt={''} />
+                </div>
+                : <>
+                    <div className="w-full flex">
+                        <PrimaryButton
+                            className="w-fit ml-auto"
+                            text={'+ Nova espécie'}
+                            onClick={() => Router.push('/fish/newFish')}
+                        />
+                    </div>
+                    <div className="h-fit w-full">
+                        <Table header={tableHeader} content={tableContent} onClick={Router.push} pathToEdit={'/fish/'} />
+                    </div>
+                </>
+            }
         </div>
     )
 }
