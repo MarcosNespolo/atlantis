@@ -12,8 +12,8 @@ import { parseCookies } from 'nookies'
 import Link from "next/link"
 
 export default function Login() {
-    const [email, setEmail] = useState<string>('aquarista@email.com')
-    const [password, setPassword] = useState<string>('123456')
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
     const {

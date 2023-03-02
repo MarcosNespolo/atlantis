@@ -10,50 +10,16 @@ import { useAuthContext } from '../contexts/AuthContext'
 import Link from "next/link"
 
 export default function Register() {
-    const [name, setName] = useState<string>('Maria')
-    const [email, setEmail] = useState<string>('aquarista@email.com')
-    const [password, setPassword] = useState<string>('123456')
-    const [confirmPassword, setConfirmPassword] = useState<string>('123456')
+    const [name, setName] = useState<string>('')
+    const [email, setEmail] = useState<string>('')
+    const [password, setPassword] = useState<string>('')
+    const [confirmPassword, setConfirmPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
     const {
         register
     } = useAuthContext()
 
-    // async function registerUser() {
-
-    //     const user = {
-    //         name,
-    //         email,
-    //         password
-    //     }
-
-    //     setLoading(true)
-
-    //     Promise.all([fetch('/api/user', {
-    //         method: 'POST',
-    //         headers: new Headers({ 'Content-Type': 'application/json' }),
-    //         credentials: 'same-origin',
-    //         body: JSON.stringify(user)
-    //     }).then(res => {
-    //         if (res.status >= 400) {
-    //             console.log('Error na API:', res)
-    //         }
-    //         return res.json();
-    //     })
-    //         .then(result => {
-    //             if (result.hasOwnProperty('error')) {
-    //                 console.log('Error na API:', result.error)
-    //                 setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
-    //                 setLoading(false)
-    //                 return false
-    //             } else {
-    //                 setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
-    //                 setLoading(false)
-    //             }
-    //         }
-    //         )]);
-    // }
 
     const onFormSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
