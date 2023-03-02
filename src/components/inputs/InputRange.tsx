@@ -155,13 +155,13 @@ export default function InputRange({
                     {label} {isDangerSlider && <ExclamationTriangleIcon className="w-3 mt-0.5 ml-1 text-red-700" />}
                 </span>
                 <span className="text-xs">
-                    {value[0] < value[1] ? `${value[0]} - ${value[1]}` : '-'}
+                    {value[0] <= value[1] ? `${value[0]} - ${value[1]}` : '-'}
                 </span>
             </label>
             <div>
                 <ThemeProvider theme={finalTheme}>
                     <Slider
-                        value={value[0] < value[1] ? value : interval}
+                        value={value[0] <= value[1] ? value : interval}
                         onChange={handleSliderTempChange}
                         min={interval[0]}
                         max={interval[1]}

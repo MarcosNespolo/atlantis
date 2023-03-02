@@ -1,5 +1,26 @@
 import { ALERT_MESSAGE_CODE } from "./constants"
 
+export async function downloadImage(image: string, bucket: string) {
+
+    const message = await Promise.all([fetch(`/api/image?image=${image}&bucket=${bucket}`, {
+        method: 'GET',
+        headers: new Headers({ 'Content-Type': 'application/json' }),
+        credentials: 'same-origin',
+    }).then(async res => {
+        if (res.status >= 400) {
+            console.log(res.statusText)
+            return ''
+        }
+        return res.blob()
+    })])
+
+    if (typeof message[0] == 'string') {
+        return ''
+    }
+    
+    return message[0]
+}
+
 export async function uploadImage(image: File, name: string, bucket: string) {
 
 

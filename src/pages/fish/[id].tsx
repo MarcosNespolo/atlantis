@@ -17,7 +17,7 @@ import { listFoodsService } from "../../services/food"
 import { listSubstrateService } from "../../services/substrate"
 import InputRange from "../../components/inputs/InputRange"
 import ImageButton from "../../components/buttons/ImageButton"
-import { uploadImage } from "../../utils/imagesControler"
+import { downloadImage, uploadImage } from "../../utils/imagesControler"
 
 export default function EditFood({ fishProps, foodProps, substrateProps }: any) {
     const [fish, setFish] = useState<Fish>()
@@ -43,6 +43,19 @@ export default function EditFood({ fishProps, foodProps, substrateProps }: any) 
         }
     }, [])
 
+    useEffect(() => {
+        getImageURL()
+    }, [fish])
+
+    async function getImageURL() {
+        setLoadingLogo(true)
+        const imageObject = await downloadImage(fishProps.image, 'fish')
+        if (imageObject){
+            console.log(imageObject)
+            setImageUrl(URL.createObjectURL(imageObject))
+        }
+        setLoadingLogo(false)
+    }
 
     async function updateFish() {
         setLoading(true)

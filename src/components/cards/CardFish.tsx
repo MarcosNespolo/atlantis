@@ -1,7 +1,9 @@
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid"
+import Image from "next/image"
 import Link from "next/link"
 import React, { useEffect, useState } from "react"
 import { AQUARIUM_POSITION, FOOD_NAME, SUBSTRATE_NAME, TEMPERAMENT, TEMPERAMENT_NAME } from "../../utils/constants"
+import { downloadImage } from "../../utils/imagesControler"
 import { Aquarium, Fish, Food, Substrate } from "../../utils/types"
 import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
@@ -27,6 +29,22 @@ export default function CardFish({
     onUpdateFishQuantity
 }: CardProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const [imageURL, setImageUrl] = useState<string>()
+    const [loadingLogo, setLoadingLogo] = useState<boolean>(false)
+
+    useEffect(() => {
+        getImageURL()
+    }, [fish])
+
+    async function getImageURL() {
+        setLoadingLogo(true)
+        const imageObject = await downloadImage(fish.image, 'fish')
+        if (imageObject) {
+            console.log(imageObject)
+            setImageUrl(URL.createObjectURL(imageObject))
+        }
+        setLoadingLogo(false)
+    }
 
     return (
         <Card
@@ -37,7 +55,17 @@ export default function CardFish({
             <div className={`flex flex-col sm:flex-row w-full z-10 ${minicard ? 'h-16' : 'sm:h-44'}`}>
                 {fish.image &&
                     <div className={`bg-gray-400/10 ${minicard ? 'h-16 w-32' : 'w-full sm:w-72 h-60 sm:h-44 '}`}>
-                        <img src={fish.image} className={"object-cover h-full w-full rounded-br-md rounded-tl-md"} />
+                        {imageURL && !loadingLogo ?
+                            <>
+                            <img src={imageURL} className={"object-cover h-full w-full rounded-br-md rounded-tl-md"} />
+                            </> :
+                            loadingLogo ?
+                                <div className="w-full h-full">
+                                    <Image className="w-1/2 h-full m-auto" src={'/circleLoading.svg'} width="64" height="64" alt={''} />
+                                </div>
+                                :
+                                <></>
+                        }
                     </div>
                 }
                 <div className="flex flex-col justify-between w-full h-fit pt-2 px-4">
@@ -239,7 +267,7 @@ export default function CardFish({
                     <span className="flex items-center justify-center h-10 w-10 shadow-inner text-primary-dark">
                         {fish.quantity}
                     </span>
-                    <PrimaryButton icon={'plus'} onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, +1)} />
+                    <PrimaryButton icon={'plus'} className={'rounded-l-none'} onClick={() => onUpdateFishQuantity && onUpdateFishQuantity(fish.id, +1)} />
                 </div>
             </div>
         </Card>

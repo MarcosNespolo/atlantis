@@ -29,7 +29,9 @@ export default function ImageButton({
                     />
                 </> :
                 loading ?
-                    <Image src={'/circleLoading.svg'} width="64" height="64" alt={''} />
+                    <div className="w-full h-full">
+                        <Image className="w-1/2 h-full m-auto" src={'/circleLoading.svg'} width="64" height="64" alt={''} />
+                    </div>
                     :
                     <></>
             }

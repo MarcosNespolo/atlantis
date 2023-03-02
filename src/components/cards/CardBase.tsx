@@ -31,6 +31,7 @@ export default function Card({
                 z-10
                 flex flex-col
                 rounded-md 
+                shadow
                 backdrop-filter backdrop-blur
                 ${!invisibleCard
                 && 'border border-1 border-gray-200'

@@ -5,20 +5,20 @@ import { getCurrentUser } from '../../services/user'
 
 const fishApi = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
-    const token = await getToken(req)
-
-    if (!token) {
-      throw new Error("Sem permissão de acesso")
-    }
-
-    const currentUser = await getCurrentUser(token)
-
-    if (!currentUser) {
-      throw new Error("Sem permissão de acesso")
-    }
 
     switch (req.method) {
       case 'POST': {
+        const token = await getToken(req)
+    
+        if (!token) {
+          throw new Error("Sem permissão de acesso")
+        }
+    
+        const currentUser = await getCurrentUser(token)
+    
+        if (!currentUser) {
+          throw new Error("Sem permissão de acesso")
+        }
         const { file, name, bucket } = req.body
         console.log(name)
         const imageBlob = Buffer.from(file.split("base64,")[1], 'base64')
@@ -39,11 +39,27 @@ const fishApi = async (req: NextApiRequest, res: NextApiResponse) => {
 
         return res.status(200).json({ message: data })
       }
-      // case 'GET': {
-      //   const response = await listFishesService()
+      case 'GET': {
+        const { image, bucket } = req.query
 
-      //   return res.status(response.statusCode).json(response.data)
-      // }
+        if (image == null || bucket == null) {
+          return res.status(400).json("Requisição HTTP inválida")
+        }
+
+        const { data, error } = await supabase
+          .storage
+          .from(bucket as string)
+          .download(`public/` + image as string, {})
+
+        if (error) {
+          return res.status(500).json({ error: error })
+        }
+
+        const arrayBuffer = await data.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+
+        return res.end(buffer)
+      }
       // case 'PUT': {
       //   const fish: Fish = req.body
 
