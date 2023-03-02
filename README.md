@@ -12,6 +12,9 @@ A aplicação está disponível online através do ambiente da Vercel, no seguin
 [https://atlantis-aquarium.vercel.app/](https://atlantis-aquarium.vercel.app/)
 
 
+## 📜 Documento do Trabalho de Conclusão de Curso
+
+[https://drive.google.com/file/d/1d-yaXQGZJSA8wrrPDBnhYHDdOr4TW754/view](https://drive.google.com/file/d/1d-yaXQGZJSA8wrrPDBnhYHDdOr4TW754/view)
 
 
 ## 💻 Requisitos
