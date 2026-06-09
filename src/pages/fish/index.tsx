@@ -5,11 +5,9 @@ import Table, { TableContentProps } from "../../components/tables/Table"
 import { TEMPERAMENT_OTHERS, TEMPERAMENT_SAME } from "../../utils/constants"
 import { Fish } from "../../utils/types"
 import { listFishesService } from "../../services/fish"
-import { useRequireRole } from "../../lib/auth/guards"
 import Image from "next/image"
 
 export default function Species() {
-    const { allowed } = useRequireRole(['especialista', 'admin'])
     const [tableHeader] = useState<string[]>([
         'ID',
         'Nome',
@@ -39,9 +37,9 @@ export default function Species() {
     }
 
     useEffect(() => {
-        if (allowed) getFishes()
+        getFishes()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [allowed])
+    }, [])
 
     return (
         <div className="flex flex-col gap-4 h-screen w-full px-4 md:pl-28 pt-4">

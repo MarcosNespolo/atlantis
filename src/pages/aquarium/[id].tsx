@@ -6,7 +6,6 @@ import { listSubstrateService } from "../../services/substrate"
 import { listFishesService } from "../../services/fish"
 import { getAquariumService } from "../../services/aquarium"
 import { useNewAquariumContext } from "../../contexts/NewAquariumContext"
-import { useRequireAuth } from "../../lib/auth/guards"
 import CardFish from "../../components/cards/CardFish"
 import CardAquarium from "../../components/cards/CardAquarium"
 import Image from "next/image"
@@ -20,7 +19,6 @@ type EditAquariumProps = {
 }
 
 export default function EditAquarium({ id, fishesProps, foodProps, substrateProps, error }: EditAquariumProps) {
-    const { session } = useRequireAuth()
     const {
         aquarium,
         updateAquarium,
@@ -34,7 +32,7 @@ export default function EditAquarium({ id, fishesProps, foodProps, substrateProp
     const [loadError, setLoadError] = useState<string | null>(error)
 
     useEffect(() => {
-        if (!session || error) return
+        if (error) return
         setFood(foodProps)
         setSubstrate(substrateProps)
         getAquariumService(id).then(res => {
@@ -45,7 +43,7 @@ export default function EditAquarium({ id, fishesProps, foodProps, substrateProp
             loadAquarium(res.data, fishesProps)
         })
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session])
+    }, [])
 
     return (
         <div className="w-full md:ml-24 flex">

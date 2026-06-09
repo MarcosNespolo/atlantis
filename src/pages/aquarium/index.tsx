@@ -5,11 +5,9 @@ import Table, { TableContentProps } from "../../components/tables/Table"
 import { ALERT_MESSAGE_CODE } from "../../utils/constants"
 import { AlertMessage, Aquarium } from "../../utils/types"
 import { listAquariumsService } from "../../services/aquarium"
-import { useRequireAuth } from "../../lib/auth/guards"
 import Image from "next/image"
 
 export default function Aquariums() {
-    const { session } = useRequireAuth()
     const [tableHeader] = useState<string[]>(['ID', 'Nome', 'Peixes'])
     const [tableContent, setTableContent] = useState<TableContentProps[][]>()
     const [loading, setLoading] = useState<boolean>(false)
@@ -37,9 +35,9 @@ export default function Aquariums() {
     }
 
     useEffect(() => {
-        if (session) getAquariums()
+        getAquariums()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session])
+    }, [])
 
     return (
         <div className="flex flex-col gap-4 h-screen w-full px-4 md:pl-28 pt-4">

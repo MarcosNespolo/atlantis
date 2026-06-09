@@ -1,60 +1,29 @@
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { GlobeAmericasIcon } from '@heroicons/react/24/outline'
-import { useAuthContext } from '../../contexts/AuthContext'
 
+// Navegação pública (sem login). As seções por-papel voltam quando a auth for reativada.
 function SidebarMenu() {
   const router = useRouter()
   const path = '/'.concat(router.pathname.split('/')[1])
-  const {
-    role
-  } = useAuthContext()
 
-  const defaultNavigation = [
+  const navigation = [
     { name: 'Aquário', href: '/newAquarium', icon: GlobeAmericasIcon },
-  ]
-
-  const specialistNavigation = [
     { name: 'Espécies', href: '/fish', icon: GlobeAmericasIcon },
-    { name: 'Alimentos', href: '/food', icon: GlobeAmericasIcon },
-    { name: 'Substratos', href: '/substrate', icon: GlobeAmericasIcon },
   ]
-
-  const adminNavigation = [
-    { name: 'Usuários', href: '/user', icon: GlobeAmericasIcon },
-  ]
-
-  const [navigation, setNavigation] = useState<any>([])
-
-  useEffect(() => {
-    switch (role) {
-      case 'aquarista':
-        setNavigation(defaultNavigation)
-        break
-      case 'especialista':
-        setNavigation([...defaultNavigation, ...specialistNavigation])
-        break
-      case 'admin':
-        setNavigation([...defaultNavigation, ...specialistNavigation, ...adminNavigation])
-        break
-      default:
-        setNavigation([])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role])
 
   return (
     <>
       <nav className="flex-1 pb-2 space-y-1">
-        {navigation && navigation.map((item: any) => (
+        {navigation.map((item) => (
           <Link
             key={item.name}
             href={item.href}
             className={`
-            flex flex-col 
-            items-center text-center 
-            p-2 
+            flex flex-col
+            items-center text-center
+            p-2
             rounded-r-xl
             font-medium
             text-sm text-white
@@ -69,7 +38,6 @@ function SidebarMenu() {
             />
             {item.name}
           </Link>
-
         ))}
       </nav>
     </>
