@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid"
 import { AQUARIUM_DEFAULT_PARAMETERS } from "../../utils/constants"
 import { AlertMessage, Aquarium, Fish } from "../../utils/types"
 import PrimaryButton from "../buttons/PrimaryButton"
@@ -59,7 +60,7 @@ export default function CardAquarium({
             alertMessage={message}
             onCloseMessage={() => setMessage(null)}
             darkTheme={darkTheme}
-            className={className + ' py-2 px-4'}
+            className={className + ' py-2 px-4' + (aquarium.conflicts && aquarium.conflicts.length > 0 ? ' ring-2 ring-red-500' : '')}
         >
             <span className="mx-auto text-xl mt-4 mb-6">Aquário</span>
             <div className="flex flex-col w-full sm:flex-row sm:gap-8">
@@ -110,6 +111,16 @@ export default function CardAquarium({
                     <span className="text-sm">{aquarium.thermostat} W</span>
                 </div>
             </div>
+            {aquarium.conflicts && aquarium.conflicts.length > 0 &&
+                <div className="flex flex-col gap-1 my-2 p-2 rounded bg-red-50 border border-red-200">
+                    <span className="flex items-center font-semibold text-red-700 text-sm">
+                        <ExclamationTriangleIcon className="w-4 mr-1" /> Incompatibilidades
+                    </span>
+                    {aquarium.conflicts.map((c, i) => (
+                        <span key={i} className="text-xs text-red-700">{c.message}</span>
+                    ))}
+                </div>
+            }
             <div className="flex flex-col my-2 gap-3">
                 {aquarium.fishes.length > 0 && aquarium.fishes.map((fish: Fish, index: number) => (
                     <CardFish
@@ -117,6 +128,7 @@ export default function CardAquarium({
                         fish={fish}
                         onUpdateFishQuantity={onUpdateFishQuantity}
                         aquarium={aquarium}
+                        conflicts={aquarium.conflicts}
                         minicard
                     />
                 ))}

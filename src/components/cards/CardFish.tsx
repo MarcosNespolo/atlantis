@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import { AQUARIUM_POSITION, FOOD_NAME, SUBSTRATE_NAME, TEMPERAMENT, TEMPERAMENT_NAME } from "../../utils/constants"
 import { downloadImage } from "../../utils/imagesControler"
 import { Aquarium, Fish, Food, Substrate } from "../../utils/types"
+import type { Conflict } from "../../domain/types"
 import PrimaryButton from "../buttons/PrimaryButton"
 import InputRange from "../inputs/InputRange"
 import Card from "./CardBase"
@@ -16,6 +17,7 @@ type CardProps = {
     className?: string
     minicard?: boolean
     darkTheme?: boolean
+    conflicts?: Conflict[]
     onUpdateFishQuantity?: (fishId: number, quantityUpdate: number) => void
 }
 
@@ -26,9 +28,12 @@ export default function CardFish({
     className,
     minicard,
     darkTheme,
+    conflicts,
     onUpdateFishQuantity
 }: CardProps) {
     const [isOpen, setIsOpen] = useState(false)
+    const fishConflicts = (conflicts ?? []).filter(c => c.fishIds.includes(fish.id))
+    const hasConflict = fishConflicts.length > 0
     const [imageURL, setImageUrl] = useState<string>()
     const [loadingLogo, setLoadingLogo] = useState<boolean>(false)
 
@@ -50,7 +55,7 @@ export default function CardFish({
         <Card
             id={id}
             darkTheme={darkTheme}
-            className={className}
+            className={`${className ?? ''} ${hasConflict ? 'ring-2 ring-red-500' : ''}`}
         >
             <div className={`flex flex-col sm:flex-row w-full z-10 ${minicard ? 'h-16' : 'sm:h-44'}`}>
                 {fish.image &&
@@ -222,6 +227,15 @@ export default function CardFish({
                             </span>
                         }
                     </>
+                }
+                {fishConflicts.length > 0 &&
+                    <div className="flex flex-col gap-0.5 mt-1 mb-1">
+                        {fishConflicts.map((c, i) => (
+                            <span key={i} className="flex items-start font-semibold text-red-700">
+                                <ExclamationTriangleIcon className="w-4 mr-1 mt-0.5 shrink-0" /> {c.message}
+                            </span>
+                        ))}
+                    </div>
                 }
             </div>
             <div

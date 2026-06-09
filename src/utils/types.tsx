@@ -1,5 +1,8 @@
+import type { WaterType, Conflict } from "../domain/types"
+
 export type Fish = {
     id: number
+    waterType?: WaterType
     name: string
     image: string
     nameEn: string
@@ -60,6 +63,7 @@ export type FishBD = {
 }
 
 export type Aquarium = {
+    conflicts?: Conflict[]
     aquarium_id?: number
     name?: string
     created?: string
