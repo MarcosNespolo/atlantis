@@ -1,4 +1,4 @@
-import { supabase } from "../../supabaseClient";
+import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { ALERT_MESSAGE_CODE } from "../utils/constants";
 import { Fish, FishBD, Substrate } from "../utils/types";
 

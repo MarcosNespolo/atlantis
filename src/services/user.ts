@@ -1,4 +1,4 @@
-import { supabase } from "../../supabaseClient";
+import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { User } from "../utils/types";
 import { destroyCookie } from 'nookies'
 

@@ -35,12 +35,13 @@ git clone https://github.com/MarcosNespolo/atlantis.git
 npm install
 ```
 
-3 - Crie um arquivo .env.local na raiz do projeto com as variáveis de ambiente necessárias (enviadas por e-mail):
+3 - Crie um arquivo `.env.local` na raiz do projeto (copie de `.env.example`) com as variáveis de ambiente:
 ```
-SUPABASE_URL=https://seu-endereco-do-supabase.supabase.co
-SUPABASE_ANON_KEY=chave-publica-do-supabase
-SUPABASE_API_KEY=chave-privada-do-supabase
+NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=chave-publishable-do-supabase   # pode ir ao browser
+SUPABASE_SERVICE_ROLE_KEY=chave-secreta-do-supabase           # NUNCA exposta ao browser (só no servidor)
 ```
+> As duas primeiras são públicas (browser, com RLS). A `SUPABASE_SERVICE_ROLE_KEY` (formato `sb_secret_...`) bypassa a RLS e só é usada em `src/pages/api/*`/SSR — jamais no cliente.
 
 4 - Execute a aplicação localmente:
 ```

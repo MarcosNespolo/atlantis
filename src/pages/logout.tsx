@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next"
 import React from "react"
 import { destroyCookie } from 'nookies'
-import { supabaseAuth } from "../../supabaseClient"
+import { supabaseBrowser as supabaseAuth } from "../lib/supabase/browser"
 
 export default function Logout() {
     return <></>

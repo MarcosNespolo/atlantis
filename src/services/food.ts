@@ -1,4 +1,4 @@
-import { supabase } from "../../supabaseClient";
+import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { Food } from "../utils/types";
 
 export async function createNewFoodService(food: Food) {

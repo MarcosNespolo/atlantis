@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { supabaseAuth } from '../../../supabaseClient'
+import { supabaseBrowser as supabaseAuth } from '../../lib/supabase/browser'
 import { REQUEST_TYPE } from '../../utils/constants'
 import { destroyCookie } from 'nookies'
 import { getCurrentUser, registerNewUser } from '../../services/user'

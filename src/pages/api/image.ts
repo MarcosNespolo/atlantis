@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { supabase } from '../../../supabaseClient'
+import { supabaseBrowser as supabase } from '../../lib/supabase/browser'
 import getToken from '../../services/getToken'
 import { getCurrentUser } from '../../services/user'
 

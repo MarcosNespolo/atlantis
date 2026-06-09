@@ -1,4 +1,4 @@
-import { supabase } from "../../supabaseClient";
+import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { updateAquariumParameters } from "../utils/aquariumControler";
 import { ALERT_MESSAGE_CODE, AQUARIUM_DEFAULT, ERROR_MESSAGE } from "../utils/constants";
 import { Aquarium, AquariumBD, AquariumFishBD } from "../utils/types";
