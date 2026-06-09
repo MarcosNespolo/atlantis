@@ -1,0 +1,511 @@
+{
+  "generatedAt": "2026-06-09T20:26:30.595Z",
+  "draft": true,
+  "disclaimer": "RASCUNHO — valores de espécie compilados de fontes de hobby, NÃO validados nem assinados por especialista credenciado. specialist_id permanece NULL até curadoria. Ver CLAUDE.md §1 e §8.",
+  "substrates": [
+    {
+      "id": 0,
+      "slug": "sem_substrato",
+      "name": "Sem substrato"
+    },
+    {
+      "id": 1,
+      "slug": "cascalho",
+      "name": "Cascalho"
+    },
+    {
+      "id": 2,
+      "slug": "humus",
+      "name": "Humus"
+    },
+    {
+      "id": 3,
+      "slug": "areia",
+      "name": "Areia"
+    },
+    {
+      "id": 4,
+      "slug": "aragonita",
+      "name": "Aragonita"
+    },
+    {
+      "id": 5,
+      "slug": "basalto",
+      "name": "Basalto"
+    },
+    {
+      "id": 6,
+      "slug": "turfa",
+      "name": "Turfa"
+    }
+  ],
+  "foods": [
+    {
+      "id": 0,
+      "slug": "pastilha",
+      "name": "Pastilha"
+    },
+    {
+      "id": 1,
+      "slug": "granulada",
+      "name": "Granulada"
+    },
+    {
+      "id": 2,
+      "slug": "floco",
+      "name": "Floco"
+    },
+    {
+      "id": 3,
+      "slug": "tablet",
+      "name": "Tablet"
+    },
+    {
+      "id": 4,
+      "slug": "farinha",
+      "name": "Farinha"
+    },
+    {
+      "id": 5,
+      "slug": "artemia",
+      "name": "Artemia"
+    }
+  ],
+  "species": [
+    {
+      "id": 1,
+      "name": "Betta",
+      "nameEn": "Siamese fighting fish",
+      "scientificName": "Betta splendens",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 1,
+      "position": "superficie",
+      "temperamentSame": "territorial_machos",
+      "temperamentOthers": "territorial",
+      "size": 6.5,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        null,
+        null
+      ],
+      "volumeFirst": 20,
+      "volumeAdditional": 10,
+      "temperature": [
+        24,
+        28
+      ],
+      "ph": [
+        6,
+        7.5
+      ],
+      "dgh": [
+        5,
+        20
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Machos não convivem entre si. Prefere água parada e morna.",
+      "substrates": [
+        {
+          "id": 1,
+          "slug": "cascalho",
+          "name": "Cascalho"
+        },
+        {
+          "id": 2,
+          "slug": "humus",
+          "name": "Humus"
+        },
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        }
+      ],
+      "foods": [
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        },
+        {
+          "id": 1,
+          "slug": "granulada",
+          "name": "Granulada"
+        },
+        {
+          "id": 5,
+          "slug": "artemia",
+          "name": "Artemia"
+        }
+      ],
+      "specialist": null
+    },
+    {
+      "id": 2,
+      "name": "Tricogáster-azul",
+      "nameEn": "Three spot gourami",
+      "scientificName": "Trichogaster trichopterus",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 1,
+      "position": "meio",
+      "temperamentSame": "territorial",
+      "temperamentOthers": "pacifico",
+      "size": 12,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        null,
+        null
+      ],
+      "volumeFirst": 80,
+      "volumeAdditional": 40,
+      "temperature": [
+        22,
+        28
+      ],
+      "ph": [
+        6,
+        8
+      ],
+      "dgh": [
+        5,
+        25
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Respira ar atmosférico (labirinto); tolera ampla faixa.",
+      "substrates": [
+        {
+          "id": 1,
+          "slug": "cascalho",
+          "name": "Cascalho"
+        },
+        {
+          "id": 2,
+          "slug": "humus",
+          "name": "Humus"
+        },
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        }
+      ],
+      "foods": [
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        },
+        {
+          "id": 1,
+          "slug": "granulada",
+          "name": "Granulada"
+        },
+        {
+          "id": 0,
+          "slug": "pastilha",
+          "name": "Pastilha"
+        }
+      ],
+      "specialist": null
+    },
+    {
+      "id": 3,
+      "name": "Neon",
+      "nameEn": "Neon tetra",
+      "scientificName": "Paracheirodon innesi",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 6,
+      "position": "meio",
+      "temperamentSame": "pacifico",
+      "temperamentOthers": "pacifico",
+      "size": 3.5,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        null,
+        null
+      ],
+      "volumeFirst": 40,
+      "volumeAdditional": 3,
+      "temperature": [
+        20,
+        26
+      ],
+      "ph": [
+        5,
+        7
+      ],
+      "dgh": [
+        1,
+        10
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Espécie de cardume (mín. 6). Água mole e levemente ácida.",
+      "substrates": [
+        {
+          "id": 2,
+          "slug": "humus",
+          "name": "Humus"
+        },
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        },
+        {
+          "id": 6,
+          "slug": "turfa",
+          "name": "Turfa"
+        }
+      ],
+      "foods": [
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        },
+        {
+          "id": 1,
+          "slug": "granulada",
+          "name": "Granulada"
+        },
+        {
+          "id": 5,
+          "slug": "artemia",
+          "name": "Artemia"
+        }
+      ],
+      "specialist": null
+    },
+    {
+      "id": 4,
+      "name": "Guppy",
+      "nameEn": "Guppy",
+      "scientificName": "Poecilia reticulata",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 3,
+      "position": "superficie",
+      "temperamentSame": "pacifico",
+      "temperamentOthers": "pacifico",
+      "size": 5,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        null,
+        null
+      ],
+      "volumeFirst": 40,
+      "volumeAdditional": 4,
+      "temperature": [
+        22,
+        28
+      ],
+      "ph": [
+        6.8,
+        7.8
+      ],
+      "dgh": [
+        8,
+        25
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Prolífico (vivíparo); prefere água dura e alcalina.",
+      "substrates": [
+        {
+          "id": 1,
+          "slug": "cascalho",
+          "name": "Cascalho"
+        },
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        }
+      ],
+      "foods": [
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        },
+        {
+          "id": 1,
+          "slug": "granulada",
+          "name": "Granulada"
+        },
+        {
+          "id": 5,
+          "slug": "artemia",
+          "name": "Artemia"
+        }
+      ],
+      "specialist": null
+    },
+    {
+      "id": 5,
+      "name": "Acará-bandeira",
+      "nameEn": "Angelfish",
+      "scientificName": "Pterophyllum scalare",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 1,
+      "position": "meio",
+      "temperamentSame": "territorial",
+      "temperamentOthers": "agressivo_menores",
+      "size": 15,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        40,
+        null
+      ],
+      "volumeFirst": 120,
+      "volumeAdditional": 40,
+      "temperature": [
+        24,
+        30
+      ],
+      "ph": [
+        6,
+        7.5
+      ],
+      "dgh": [
+        3,
+        15
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Corpo alto exige aquário alto (≥40 cm). Predador de peixes muito pequenos (ex.: neon).",
+      "substrates": [
+        {
+          "id": 2,
+          "slug": "humus",
+          "name": "Humus"
+        },
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        }
+      ],
+      "foods": [
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        },
+        {
+          "id": 1,
+          "slug": "granulada",
+          "name": "Granulada"
+        },
+        {
+          "id": 0,
+          "slug": "pastilha",
+          "name": "Pastilha"
+        },
+        {
+          "id": 5,
+          "slug": "artemia",
+          "name": "Artemia"
+        }
+      ],
+      "specialist": null
+    },
+    {
+      "id": 6,
+      "name": "Coredora-bronze",
+      "nameEn": "Bronze corydoras",
+      "scientificName": "Corydoras aeneus",
+      "image": null,
+      "waterType": "doce",
+      "minimumShoal": 6,
+      "position": "fundo",
+      "temperamentSame": "pacifico",
+      "temperamentOthers": "pacifico",
+      "size": 6.5,
+      "aquariumWidth": [
+        null,
+        null
+      ],
+      "aquariumHeight": [
+        null,
+        null
+      ],
+      "volumeFirst": 50,
+      "volumeAdditional": 8,
+      "temperature": [
+        22,
+        26
+      ],
+      "ph": [
+        6,
+        7.5
+      ],
+      "dgh": [
+        2,
+        15
+      ],
+      "salinity": [
+        0,
+        0
+      ],
+      "note": "Rascunho. Espécie de cardume de fundo (mín. 6). Exige substrato de areia para não ferir os barbilhões.",
+      "substrates": [
+        {
+          "id": 3,
+          "slug": "areia",
+          "name": "Areia"
+        }
+      ],
+      "foods": [
+        {
+          "id": 0,
+          "slug": "pastilha",
+          "name": "Pastilha"
+        },
+        {
+          "id": 3,
+          "slug": "tablet",
+          "name": "Tablet"
+        },
+        {
+          "id": 2,
+          "slug": "floco",
+          "name": "Floco"
+        }
+      ],
+      "specialist": null
+    }
+  ]
+}

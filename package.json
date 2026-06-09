@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/build-fallback.mjs",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:seed": "node scripts/build-seed.mjs",
+    "build:fallback": "node scripts/build-fallback.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.10.6",
