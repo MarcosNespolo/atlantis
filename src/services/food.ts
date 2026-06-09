@@ -1,5 +1,7 @@
 import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { Food } from "../utils/types";
+import { foodRowToDomain } from "../lib/mappers";
+import { foodDomainToLegacy } from "../lib/legacy";
 
 export async function createNewFoodService(food: Food) {
     const { data: foodData, error: foodDataError } = await supabase
@@ -15,31 +17,32 @@ export async function createNewFoodService(food: Food) {
 }
 
 export async function getFoodsService(food_id: string) {
-    const { data: foodData, error: foodDataError } = await supabase
-        .from('FOOD')
+    const { data, error } = await supabase
+        .from('foods')
         .select('*')
-        .eq('food_id', food_id)
+        .eq('id', food_id)
         .single()
 
-    if (foodDataError) {
-        console.log(foodDataError)
-        throw { data: foodDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { statusCode: 500, data: null }
     }
 
-    return { statusCode: 200, data: foodData }
+    return { statusCode: 200, data: foodDomainToLegacy(foodRowToDomain(data as any)) }
 }
 
 export async function listFoodsService() {
-    const { data: foodData, error: foodDataError } = await supabase
-        .from('FOOD')
+    const { data, error } = await supabase
+        .from('foods')
         .select('*')
+        .order('id')
 
-    if (foodDataError) {
-        console.log(foodDataError)
-        throw { data: foodDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { statusCode: 500, data: null }
     }
 
-    return { statusCode: 200, data: foodData }
+    return { statusCode: 200, data: (data ?? []).map((r: any) => foodDomainToLegacy(foodRowToDomain(r))) }
 }
 
 export async function updateFoodService(food: Food) {

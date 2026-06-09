@@ -1,5 +1,7 @@
 import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { Substrate } from "../utils/types";
+import { substrateRowToDomain } from "../lib/mappers";
+import { substrateDomainToLegacy } from "../lib/legacy";
 
 export async function createNewSubstrateService(substrate: Substrate) {
     const { data: substrateData, error: substrateDataError } = await supabase
@@ -16,32 +18,33 @@ export async function createNewSubstrateService(substrate: Substrate) {
 
 
 export async function listSubstrateService() {
-    const { data: substrateData, error: substrateDataError } = await supabase
-        .from('SUBSTRATE')
+    const { data, error } = await supabase
+        .from('substrates')
         .select('*')
+        .order('id')
 
-    if (substrateDataError) {
-        console.log(substrateDataError)
-        throw { data: substrateDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { data: null, statusCode: 500 }
     }
 
-    return { data: substrateData, statusCode: 200 }
+    return { data: (data ?? []).map((r: any) => substrateDomainToLegacy(substrateRowToDomain(r))), statusCode: 200 }
 }
 
 
 export async function getSubstrateService(substrate_id: string) {
-    const { data: substrateData, error: substrateDataError } = await supabase
-        .from('SUBSTRATE')
+    const { data, error } = await supabase
+        .from('substrates')
         .select('*')
-        .eq('substrate_id', substrate_id)
+        .eq('id', substrate_id)
         .single()
 
-    if (substrateDataError) {
-        console.log(substrateDataError)
-        throw { data: substrateDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { statusCode: 500, data: null }
     }
 
-    return { statusCode: 200, data: substrateData }
+    return { statusCode: 200, data: substrateDomainToLegacy(substrateRowToDomain(data as any)) }
 }
 
 export async function updateSubstrateService(substrate: Substrate) {

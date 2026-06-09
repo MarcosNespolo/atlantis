@@ -1,6 +1,11 @@
 import { supabaseBrowser as supabase } from "../lib/supabase/browser";
 import { ALERT_MESSAGE_CODE } from "../utils/constants";
 import { Fish, FishBD, Substrate } from "../utils/types";
+import { fishRowToDomain } from "../lib/mappers";
+import { fishDomainToLegacy } from "../lib/legacy";
+
+// Leitura via schema NOVO (fish + joins N:N) -> domínio -> formato legado (ponte F7).
+const FISH_SELECT = '*, fish_substrates(substrates(*)), fish_foods(foods(*)), specialist:profiles(*)'
 
 export async function createNewFishService(fish: Fish, user_id: number) {
 
@@ -33,31 +38,32 @@ export async function createNewFishService(fish: Fish, user_id: number) {
 }
 
 export async function getFishService(fish_id: string) {
-    const { data: fishData, error: fishDataError } = await supabase
-        .from('FISH')
-        .select('*, food: food_id(*), substrates: substrate_id(*), specialist: specialist_id(*)')
-        .eq('fish_id', fish_id)
+    const { data, error } = await supabase
+        .from('fish')
+        .select(FISH_SELECT)
+        .eq('id', fish_id)
         .single()
 
-    if (fishDataError) {
-        console.log(fishDataError)
-        throw { data: fishDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { statusCode: 500, data: null }
     }
 
-    return { statusCode: 200, data: prepareResponseFish(fishData) }
+    return { statusCode: 200, data: fishDomainToLegacy(fishRowToDomain(data as any)) }
 }
 
 export async function listFishesService() {
-    const { data: fishData, error: fishDataError } = await supabase
-        .from('FISH')
-        .select('*, food: food_id(*), substrates: substrate_id(*), specialist: specialist_id(*)')
+    const { data, error } = await supabase
+        .from('fish')
+        .select(FISH_SELECT)
+        .order('name')
 
-    if (fishDataError) {
-        console.log(fishDataError)
-        throw { data: fishDataError.message, statusCode: 500 }
+    if (error) {
+        console.log(error)
+        return { statusCode: 500, data: null }
     }
 
-    return { statusCode: 200, data: prepareResponseFishArray(fishData) }
+    return { statusCode: 200, data: (data ?? []).map((r: any) => fishDomainToLegacy(fishRowToDomain(r))) }
 }
 
 export async function updateFishService(fish: Fish, user_id: number) {
