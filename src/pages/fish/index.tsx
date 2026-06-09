@@ -1,68 +1,47 @@
-import { GetServerSideProps } from "next"
 import Router from "next/router"
 import React, { useEffect, useState } from "react"
 import PrimaryButton from "../../components/buttons/PrimaryButton"
 import Table, { TableContentProps } from "../../components/tables/Table"
-import { ALERT_MESSAGE_CODE, TEMPERAMENT_OTHERS, TEMPERAMENT_SAME, USER_ROLE } from "../../utils/constants"
-import { AlertMessage, Fish } from "../../utils/types"
-import { parseCookies } from 'nookies'
-import { getCurrentUser } from "../../services/user"
+import { TEMPERAMENT_OTHERS, TEMPERAMENT_SAME } from "../../utils/constants"
+import { Fish } from "../../utils/types"
+import { listFishesService } from "../../services/fish"
+import { useRequireRole } from "../../lib/auth/guards"
 import Image from "next/image"
 
 export default function Species() {
-    const [tableHeader, setTableHeader] = useState<string[]>([
+    const { allowed } = useRequireRole(['especialista', 'admin'])
+    const [tableHeader] = useState<string[]>([
         'ID',
         'Nome',
-        'Nome ciêntífico',
+        'Nome científico',
         'pH',
         'Temperatura (ºC)',
         'Temperamento'
     ])
     const [tableContent, setTableContent] = useState<TableContentProps[][]>()
     const [loading, setLoading] = useState<boolean>(false)
-    const [message, setMessage] = useState<AlertMessage>()
 
     async function getFishes() {
         setLoading(true)
-
-        Promise.all([fetch('/api/fish', {
-            method: 'GET',
-            headers: new Headers({ 'Content-Type': 'application/json' }),
-            credentials: 'same-origin'
-        }).then(res => {
-            if (res.status >= 400) {
-                console.log('Error na API:', res)
-            }
-            return res.json();
-        }).then(result => {
-            setLoading(false)
-            if (result.hasOwnProperty('error')) {
-                console.log('Error na API:', result.error)
-                setMessage({ message: 'Ops, algo deu errado e não consegui salvar essa informação', code: ALERT_MESSAGE_CODE.DANGER })
-                return false
-            } else {
-                setTableContent(
-                    result.map((content: Fish) => {
-                        return [
-                            { text: content.id },
-                            { text: content.name + ', ' + content.nameEn },
-                            { text: content.scientificName },
-                            { text: Math.min(...content.ph) + ' - ' + Math.max(...content.ph) },
-                            { text: Math.min(...content.temperature) + ' - ' + Math.max(...content.temperature) }, ,
-                            { text: TEMPERAMENT_OTHERS.get(content.temperamentOthers) + ', ' + TEMPERAMENT_SAME.get(content.temperamentSame) }
-                        ]
-                    })
-                )
-                setMessage({ message: result, code: ALERT_MESSAGE_CODE.SUCCESS })
-            }
-        }
+        const response = await listFishesService()
+        setLoading(false)
+        if (response.statusCode !== 200 || !response.data) return
+        setTableContent(
+            response.data.map((f: Fish) => [
+                { text: String(f.id) },
+                { text: f.name + (f.nameEn ? ', ' + f.nameEn : '') },
+                { text: f.scientificName },
+                { text: `${Math.min(...f.ph)} - ${Math.max(...f.ph)}` },
+                { text: `${Math.min(...f.temperature)} - ${Math.max(...f.temperature)}` },
+                { text: [TEMPERAMENT_OTHERS.get(f.temperamentOthers), TEMPERAMENT_SAME.get(f.temperamentSame)].filter(Boolean).join(', ') },
+            ])
         )
-        ])
     }
 
     useEffect(() => {
-        getFishes()
-    }, [])
+        if (allowed) getFishes()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [allowed])
 
     return (
         <div className="flex flex-col gap-4 h-screen w-full px-4 md:pl-28 pt-4">
@@ -86,30 +65,4 @@ export default function Species() {
             }
         </div>
     )
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { ['atlantis_token']: token } = parseCookies(ctx)
-
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
-        }
-    }
-
-    const currentUser = await getCurrentUser(token)
-
-    if (!currentUser || currentUser?.data?.role_id == USER_ROLE.AQUARIST) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
-        }
-    }
-
-    return { props: {} }
 }
