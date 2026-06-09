@@ -12,21 +12,22 @@ function UserBar() {
   ]
   const [navigation, setNavigation] = useState(defaultNavigation)
   const {
-    user
+    session,
+    profile
   } = useAuthContext()
 
   useEffect(() => {
-    if (user) {
+    if (session) {
       setNavigation([
         { name: 'Meus Aquários', href: '/aquarium', icon: GlobeAmericasIcon },
-        { name: 'Perfil', href: '/user/' + user.user_id, icon: UserIcon },
+        { name: 'Perfil', href: '/profile/' + (profile?.id ?? ''), icon: UserIcon },
         { name: 'Sair', href: '/logout', icon: ArrowRightOnRectangleIcon },
       ])
     } else {
       setNavigation(defaultNavigation)
     }
-
-  }, [user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session, profile])
 
   return (
     <>

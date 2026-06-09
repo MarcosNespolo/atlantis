@@ -8,7 +8,7 @@ function SidebarMenu() {
   const router = useRouter()
   const path = '/'.concat(router.pathname.split('/')[1])
   const {
-    user
+    role
   } = useAuthContext()
 
   const defaultNavigation = [
@@ -28,24 +28,21 @@ function SidebarMenu() {
   const [navigation, setNavigation] = useState<any>([])
 
   useEffect(() => {
-    if (user?.role_id) {
-      switch (user.role_id) {
-        case 1:
-          setNavigation(defaultNavigation)
-          break
-        case 2:
-          setNavigation([...defaultNavigation, ...specialistNavigation])
-          break
-        case 3:
-          setNavigation([...defaultNavigation, ...specialistNavigation, ...adminNavigation])
-          break
-        default:
-          setNavigation(defaultNavigation)
-      }
-    } else {
-      setNavigation([])
+    switch (role) {
+      case 'aquarista':
+        setNavigation(defaultNavigation)
+        break
+      case 'especialista':
+        setNavigation([...defaultNavigation, ...specialistNavigation])
+        break
+      case 'admin':
+        setNavigation([...defaultNavigation, ...specialistNavigation, ...adminNavigation])
+        break
+      default:
+        setNavigation([])
     }
-  }, [user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [role])
 
   return (
     <>

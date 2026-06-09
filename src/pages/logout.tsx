@@ -1,27 +1,15 @@
-import { GetServerSideProps } from "next"
-import React from "react"
-import { destroyCookie } from 'nookies'
-import { supabaseBrowser as supabaseAuth } from "../lib/supabase/browser"
+import React, { useEffect } from "react"
+import Router from "next/router"
+import { useAuthContext } from "../contexts/AuthContext"
 
 export default function Logout() {
+    const { logout } = useAuthContext()
+
+    useEffect(() => {
+        // logout() encerra a sessão Supabase e redireciona para '/'.
+        logout().catch(() => Router.replace('/'))
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
+
     return <></>
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-
-    try {
-        await supabaseAuth.auth.signOut()
-        destroyCookie(ctx, 'atlantis_token', {
-            path: "/",
-        })
-
-    } catch (error) {
-        console.error('Ocorreu um erro durante o logout:', error);
-    }
-    return {
-        redirect: {
-            destination: '/',
-            permanent: false,
-        }
-    }
 }

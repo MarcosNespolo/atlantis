@@ -1,93 +1,111 @@
-import Router from "next/router"
-import { createContext, ReactNode, useContext, useEffect, useState } from "react"
-import { recoverUserInformation, signInRequest, signOutRequest } from "../services/auth"
-import { REQUEST_TYPE } from "../utils/constants"
-import { setCookie, parseCookies } from 'nookies'
+import Router from 'next/router'
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react'
+import type { Session, User } from '@supabase/supabase-js'
+import { supabaseBrowser } from '../lib/supabase/browser'
+import {
+  signInRequest,
+  signUpRequest,
+  signOutRequest,
+  fetchProfile,
+  translateAuthError,
+  type ProfileRow,
+  type UserRole,
+} from '../services/auth'
 
-type AuthContextProviderProps = {
-    children: ReactNode
-}
+type AuthContextProviderProps = { children: ReactNode }
 
 type AuthContextType = {
-    login: (email: string, password: string) => Promise<string | void>
-    logout: () => Promise<void>
-    register: (name: string, email: string, password: string) => Promise<string | void>
-    setUser: (user: any) => void
-    user: any
+  session: Session | null
+  user: User | null
+  profile: ProfileRow | null
+  role: UserRole | null
+  loading: boolean
+  login: (email: string, password: string) => Promise<string | void>
+  register: (name: string, email: string, password: string) => Promise<string | void>
+  logout: () => Promise<void>
 }
-
 
 export function AuthContextProvider({ children }: AuthContextProviderProps) {
-    const [user, setUser] = useState<any>()
+  const [session, setSession] = useState<Session | null>(null)
+  const [profile, setProfile] = useState<ProfileRow | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
-    useEffect(() => {
-        const { 'atlantis_token': token } = parseCookies()
+  useEffect(() => {
+    let active = true
 
-        if (token) {
-            recoverUserInformation().then(response => {
-                if (response.error) {
-                    console.log(response.error)
-                    Router.push('/logout')
-                }
-                setUser(response.user)
-            })
-        }else{
-            setUser(null)
+    // sessão inicial + carga do profile
+    supabaseBrowser.auth.getSession().then(async ({ data }) => {
+      if (!active) return
+      setSession(data.session)
+      if (data.session?.user) {
+        const p = await fetchProfile(data.session.user.id)
+        if (active) setProfile(p)
+      }
+      if (active) setLoading(false)
+    })
+
+    // mudanças de sessão (login/logout/refresh)
+    const { data: sub } = supabaseBrowser.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+      // defere a chamada ao banco para fora do callback (evita deadlock do supabase-js)
+      setTimeout(async () => {
+        if (!active) return
+        if (newSession?.user) {
+          const p = await fetchProfile(newSession.user.id)
+          if (active) setProfile(p)
+        } else {
+          setProfile(null)
         }
-    }, [])
+      }, 0)
+    })
 
-    async function login(email: string, password: string) {
-        const { token, user, error } = await signInRequest({ email, password, type: REQUEST_TYPE.SIGN_IN })
-
-        if (error) {
-            return error
-        }
-        if (!token) {
-            return 'Não foi possível logar'
-        }
-        setUser(user)
-        setCookie(undefined, 'atlantis_token', token, {
-            maxAge: 60 * 60 * 4, // 4h
-        })
-        Router.push('/newAquarium')
+    return () => {
+      active = false
+      sub.subscription.unsubscribe()
     }
+  }, [])
 
-    async function register(name: string, email: string, password: string) {
-        const { token, user, error } = await signInRequest({ email, password, type: REQUEST_TYPE.SIGN_UP, name })
-        
-        if (error) {
-            return error
-        }
-        if (!token) {
-            return 'Não foi possível logar'
-        }
-        setUser(user)
-        setCookie(undefined, 'atlantis_token', token, {
-            maxAge: 60 * 60 * 4, // 4h
-        })
-        Router.push('/newAquarium')
+  async function login(email: string, password: string) {
+    const { error } = await signInRequest(email, password)
+    if (error) return translateAuthError(error.message)
+    Router.push('/newAquarium')
+  }
+
+  async function register(name: string, email: string, password: string) {
+    const { data, error } = await signUpRequest(name, email, password)
+    if (error) return translateAuthError(error.message)
+    // Sem sessão = projeto exige confirmação de e-mail.
+    if (!data.session) {
+      Router.push('/login')
+      return
     }
+    Router.push('/newAquarium')
+  }
 
-    async function logout(){
-        await signOutRequest()
-    }
+  async function logout() {
+    await signOutRequest()
+    setProfile(null)
+    Router.push('/')
+  }
 
-    return (
-        <AuthContext.Provider
-            value={{
-                login,
-                logout,
-                register,
-                setUser,
-                user
-            }}>
-            {children}
-        </AuthContext.Provider>
-    )
+  return (
+    <AuthContext.Provider
+      value={{
+        session,
+        user: session?.user ?? null,
+        profile,
+        role: profile?.role ?? null,
+        loading,
+        login,
+        register,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export const useAuthContext = () => {
-    return useContext(AuthContext);
-}
+export const useAuthContext = () => useContext(AuthContext)
 
 export const AuthContext = createContext({} as AuthContextType)

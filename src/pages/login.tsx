@@ -1,5 +1,5 @@
-import { GetServerSideProps } from "next"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import Router from "next/router"
 import PrimaryButton from "../components/buttons/PrimaryButton"
 import TertiaryButton from "../components/buttons/TertiaryButton"
 import Card from "../components/cards/CardBase"
@@ -8,7 +8,6 @@ import H1 from "../components/texts/h1"
 import { useAuthContext } from "../contexts/AuthContext"
 import { ALERT_MESSAGE_CODE } from "../utils/constants"
 import { AlertMessage } from "../utils/types"
-import { parseCookies } from 'nookies'
 import Link from "next/link"
 
 export default function Login() {
@@ -16,20 +15,24 @@ export default function Login() {
     const [password, setPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
-    const {
-        login
-    } = useAuthContext()
+    const { login, session } = useAuthContext()
+
+    // já logado → sai da tela de login
+    useEffect(() => {
+        if (session) Router.replace('/newAquarium')
+    }, [session])
 
     const onFormSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
-        if (!loading && login) {
-            const responseMessage = await login(email, password)
-            if (responseMessage) {
-                setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })
-            } else {
-                setMessage(undefined)
-            }
+        if (loading || !login) return
+        setLoading(true)
+        const responseMessage = await login(email, password)
+        if (responseMessage) {
+            setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })
+        } else {
+            setMessage(undefined)
         }
+        setLoading(false)
     }
 
     return (
@@ -78,19 +81,4 @@ export default function Login() {
             </Card>
         </div>
     )
-}
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { ['atlantis_token']: token } = parseCookies(ctx)
-
-    if (token) {
-        return {
-            redirect: {
-                destination: '/newAquarium',
-                permanent: false,
-            }
-        }
-    }
-
-    return { props: {} }
 }

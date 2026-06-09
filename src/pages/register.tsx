@@ -1,4 +1,5 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
+import Router from "next/router"
 import PrimaryButton from "../components/buttons/PrimaryButton"
 import TertiaryButton from "../components/buttons/TertiaryButton"
 import Card from "../components/cards/CardBase"
@@ -16,23 +17,29 @@ export default function Register() {
     const [confirmPassword, setConfirmPassword] = useState<string>('')
     const [loading, setLoading] = useState<boolean>(false)
     const [message, setMessage] = useState<AlertMessage>()
-    const {
-        register
-    } = useAuthContext()
+    const { register, session } = useAuthContext()
 
+    useEffect(() => {
+        if (session) Router.replace('/newAquarium')
+    }, [session])
 
     const onFormSubmit = async (e: { preventDefault: () => void }) => {
         e.preventDefault();
+        if (loading || !register) return
 
-        if (!loading && register) {
-            console.log(email, password)
-            const responseMessage = await register(name, email, password)
-            if (responseMessage) {
-                setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })
-            } else {
-                setMessage(undefined)
-            }
+        if (password !== confirmPassword) {
+            setMessage({ message: 'As senhas não conferem.', code: ALERT_MESSAGE_CODE.DANGER })
+            return
         }
+
+        setLoading(true)
+        const responseMessage = await register(name, email, password)
+        if (responseMessage) {
+            setMessage({ message: responseMessage, code: ALERT_MESSAGE_CODE.DANGER })
+        } else {
+            setMessage(undefined)
+        }
+        setLoading(false)
     }
 
     return (
