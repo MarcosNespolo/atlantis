@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { updateAquariumParameters, updateFishQuantity } from "../utils/aquariumControler"
-import { AQUARIUM_PART, ALERT_MESSAGE_CODE, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD, FISH_DEFAULT, AQUARIUM_DEFAULT } from "../utils/constants"
+import { AQUARIUM_PART, ALERT_MESSAGE_CODE, NEW_AQUARIUM_STEP, SUBSTRATE, TEMPERAMENT, FOOD, FISH_DEFAULT, AQUARIUM_DEFAULT, ERROR_MESSAGE } from "../utils/constants"
 import { Fish, Aquarium, Food, Substrate, AlertMessage } from "../utils/types"
+import { saveAquariumService } from "../services/aquarium"
 
 type NewAquariumContextProviderProps = {
   children: ReactNode
@@ -106,32 +107,24 @@ export function NewAquariumContextProvider({ children }: NewAquariumContextProvi
     setAquarium(updateAquariumParameters(aquariumLoaded, fishesUpdated.filter(fish => fish.quantity != 0)))
   }
 
-  async function saveAquarium() {
-    setLoading(true)
-
-    const message = await Promise.all([fetch('/api/aquarium', {
-      method: 'POST',
-      headers: new Headers({ 'Content-Type': 'application/json' }),
-      credentials: 'same-origin',
-      body: JSON.stringify(aquarium)
-    }).then(res => {
-      return res.json()
-    }).then(result => {
-      setLoading(false)
-      console.log(result)
-      if (result?.hasOwnProperty('error') || !result?.aquarium) {
-        console.log('Error na API:', result.error)
-        return { message: result.error, code: ALERT_MESSAGE_CODE.DANGER }
-      } else {
-        setAquarium(result.aquarium)
-        return { message: result?.message, code: result?.code }
-      }
+  async function saveAquarium(): Promise<AlertMessage> {
+    const suggested = aquarium.name?.trim() || 'Meu aquário'
+    const name = typeof window !== 'undefined' ? window.prompt('Dê um nome ao seu aquário:', suggested) : suggested
+    if (name === null) {
+      // usuário cancelou
+      return { message: '', code: ALERT_MESSAGE_CODE.WARNING }
     }
-    )])
 
-    console.log(message[0])
+    setLoading(true)
+    const response = await saveAquariumService({ ...aquarium, name })
+    setLoading(false)
 
-    return message[0]
+    const data: any = response.data
+    if (response.statusCode === 200 && data?.aquarium) {
+      setAquarium(data.aquarium)
+      return { message: data.message, code: data.code }
+    }
+    return { message: data?.message ?? ERROR_MESSAGE.DEFAULT, code: ALERT_MESSAGE_CODE.DANGER }
   }
 
   return (

@@ -1,154 +1,104 @@
-import { supabaseBrowser as supabase } from "../lib/supabase/browser";
-import { updateAquariumParameters } from "../utils/aquariumControler";
+import { supabaseBrowser } from "../lib/supabase/browser";
+import { fishRowToDomain } from "../lib/mappers";
+import { fishDomainToLegacy } from "../lib/legacy";
 import { ALERT_MESSAGE_CODE, AQUARIUM_DEFAULT, ERROR_MESSAGE } from "../utils/constants";
-import { Aquarium, AquariumBD, AquariumFishBD } from "../utils/types";
-import { prepareResponseFish } from "./fish";
+import { Aquarium, Fish } from "../utils/types";
+import type { WaterType } from "../domain/types";
 
-export async function upsertAquariumService(aquarium: Aquarium, user_id: number) {
+// Persistência de aquários no schema NOVO (aquariums + aquarium_fish), via cliente
+// autenticado do usuário. A RLS (aq_owner/aqf_owner) garante que só o dono lê/escreve.
+const FISH_SELECT = '*, fish_substrates(substrates(*)), fish_foods(foods(*)), specialist:profiles(*)'
 
-    const aquariumBD: AquariumBD = {
-        aquarium_id: aquarium.aquarium_id,
-        user_id: user_id,
-        name: aquarium.name,
-        created_at: aquarium.created
+function inferWaterType(fishes: Fish[]): WaterType {
+    const counts: Record<string, number> = {}
+    for (const f of fishes) {
+        const w = f.waterType ?? 'doce'
+        counts[w] = (counts[w] ?? 0) + 1
+    }
+    let best: WaterType = 'doce'
+    let bestN = -1
+    for (const w of Object.keys(counts)) {
+        if (counts[w] > bestN) { bestN = counts[w]; best = w as WaterType }
+    }
+    return best
+}
+
+function rowToLegacyAquarium(row: any): Aquarium {
+    const fishes: Fish[] = (row.aquarium_fish ?? [])
+        .filter((af: any) => af.fish)
+        .map((af: any) => ({ ...fishDomainToLegacy(fishRowToDomain(af.fish)), quantity: af.quantity }))
+    return {
+        ...AQUARIUM_DEFAULT,
+        aquarium_id: row.id,
+        name: row.name,
+        created: row.created_at,
+        fishes,
+    }
+}
+
+// Salva (insere ou atualiza) o aquário do usuário logado + recria os itens.
+export async function saveAquariumService(aquarium: Aquarium) {
+    const { data: { user } } = await supabaseBrowser.auth.getUser()
+    if (!user) {
+        return { statusCode: 401, data: { message: 'É necessário estar logado para salvar um aquário.', code: ALERT_MESSAGE_CODE.DANGER } }
     }
 
-    const { data: aquariumData, error: aquariumDataError } = await supabase
-        .from('AQUARIUM')
-        .upsert({ ...aquariumBD })
-        .select()
-        .single()
+    const fishes = aquarium.fishes.filter(f => (f.quantity ?? 0) > 0)
+    const waterType = inferWaterType(fishes)
+    const name = aquarium.name?.trim() || 'Meu aquário'
 
-    if (aquariumDataError) {
-        console.log(aquariumDataError)
-        throw { data: ERROR_MESSAGE.DEFAULT, statusCode: 500 }
+    let aquariumId = aquarium.aquarium_id
+
+    if (aquariumId) {
+        const { error } = await supabaseBrowser.from('aquariums').update({ name, water_type: waterType }).eq('id', aquariumId)
+        if (error) { console.log(error); return { statusCode: 500, data: { message: ERROR_MESSAGE.DEFAULT, code: ALERT_MESSAGE_CODE.DANGER } } }
+    } else {
+        const { data, error } = await supabaseBrowser.from('aquariums').insert({ user_id: user.id, name, water_type: waterType }).select('id').single()
+        if (error || !data) { console.log(error); return { statusCode: 500, data: { message: ERROR_MESSAGE.DEFAULT, code: ALERT_MESSAGE_CODE.DANGER } } }
+        aquariumId = (data as any).id
     }
 
-    if (!aquariumData.aquarium_id) {
-        throw { data: ERROR_MESSAGE.DEFAULT, statusCode: 500 }
-    }
-
-    const aquariumFishBD: AquariumFishBD[] = aquarium.fishes.map(fish => {
-        return {
-            aquarium_id: aquariumData.aquarium_id,
-            fish_id: fish.id,
-            quantity: fish.quantity ?? 0
-        }
-    })
-
-    const { data: aquariumFishDeleteData, error: aquariumFishDeleteDataError } = await supabase
-        .from('AQUARIUM_FISH')
-        .delete()
-        .match({ aquarium_id: aquariumBD.aquarium_id })
-
-    console.log(aquariumFishDeleteDataError)
-
-    const { data: aquariumFishData, error: aquariumFishDataError } = await supabase
-        .from('AQUARIUM_FISH')
-        .upsert(aquariumFishBD)
-        .select()
-
-    if (aquariumFishDataError) {
-        console.log(aquariumFishDataError)
-        throw { data: ERROR_MESSAGE.DEFAULT, statusCode: 500 }
+    // recria os itens (upsert por substituição)
+    await supabaseBrowser.from('aquarium_fish').delete().eq('aquarium_id', aquariumId)
+    if (fishes.length > 0) {
+        const rows = fishes.map(f => ({ aquarium_id: aquariumId, fish_id: f.id, quantity: f.quantity ?? 1 }))
+        const { error } = await supabaseBrowser.from('aquarium_fish').insert(rows)
+        if (error) { console.log(error); return { statusCode: 500, data: { message: ERROR_MESSAGE.DEFAULT, code: ALERT_MESSAGE_CODE.DANGER } } }
     }
 
     return {
-        data: {
-            aquarium: { ...aquarium, aquarium_id: aquariumData.aquarium_id },
-            message: 'Aquário salvo!',
-            code: ALERT_MESSAGE_CODE.SUCCESS
-        },
-        statusCode: 200
+        statusCode: 200,
+        data: { aquarium: { ...aquarium, aquarium_id: aquariumId, name }, message: 'Aquário salvo!', code: ALERT_MESSAGE_CODE.SUCCESS },
     }
 }
 
-export async function listAquariumsService(user_id: number) {
-    const { data: aquariumData, error: aquariumDataError } = await supabase
-        .from('AQUARIUM')
-        .select('*')
-        .eq('user_id', user_id)
+export async function listAquariumsService() {
+    const { data: { user } } = await supabaseBrowser.auth.getUser()
+    if (!user) return { statusCode: 401, data: null }
 
-    if (aquariumDataError) {
-        console.log(aquariumDataError)
-        throw { data: aquariumDataError.message, statusCode: 500 }
-    }
+    const { data, error } = await supabaseBrowser
+        .from('aquariums')
+        .select(`id, name, water_type, created_at, aquarium_fish(quantity, fish(${FISH_SELECT}))`)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
-    if (!aquariumData || aquariumData.length < 1) {
-        throw { data: ERROR_MESSAGE.DEFAULT, statusCode: 500 }
-    }
-
-    const { data: aquariumFishData, error: aquariumFishDataError } = await supabase
-        .from('AQUARIUM_FISH')
-        .select('quantity, aquarium_id, fish: fish_id(*)')
-        .in('aquarium_id', aquariumData.map((aquarium: Aquarium) => aquarium.aquarium_id))
-
-    if (aquariumFishDataError) {
-        console.log(aquariumFishDataError)
-        throw { data: aquariumFishDataError.message, statusCode: 500 }
-    }
-
-    return { statusCode: 200, data: prepareResponseAquariumArray(aquariumData, aquariumFishData) }
+    if (error) { console.log(error); return { statusCode: 500, data: null } }
+    return { statusCode: 200, data: (data ?? []).map(rowToLegacyAquarium) }
 }
 
 export async function getAquariumService(aquarium_id: string) {
-    const { data: aquariumFishData, error: aquariumFishDataError } = await supabase
-        .from('AQUARIUM_FISH')
-        .select('quantity, aquarium: aquarium_id(*), fish: fish_id(*)')
-        .eq('aquarium_id', aquarium_id)
+    const { data, error } = await supabaseBrowser
+        .from('aquariums')
+        .select(`id, name, water_type, created_at, aquarium_fish(quantity, fish(${FISH_SELECT}))`)
+        .eq('id', aquarium_id)
+        .single()
 
-    if (aquariumFishDataError) {
-        console.log(aquariumFishDataError)
-        throw { data: aquariumFishDataError.message, statusCode: 500 }
-    }
-
-    return { statusCode: 200, data: prepareResponseAquarium(aquariumFishData) }
+    if (error || !data) { console.log(error); return { statusCode: 500, data: null } }
+    return { statusCode: 200, data: rowToLegacyAquarium(data) }
 }
 
-function prepareResponseAquarium(aquariumFishBD: any[]) {
-    const aquarium = {
-        ...AQUARIUM_DEFAULT,
-        aquarium_id: aquariumFishBD[0].aquarium.aquarium_id,
-        name: aquariumFishBD[0].aquarium.name,
-        created: aquariumFishBD[0].aquarium.created_at,
-        fishes: aquariumFishBD.map(fish => {
-            return {
-                ...fish.fish,
-                quantity: fish.quantity
-            }
-        })
-    }
-
-    const aquariumUpdated = updateAquariumParameters(aquarium, aquarium.fishes.map(fish =>
-        prepareResponseFish(fish)
-    ))
-
-    return aquariumUpdated
-}
-
-function prepareResponseAquariumArray(aquariumData: any[], aquariumFishBD: any[]) {
-    const aquariums = aquariumData.map(aquarium => {
-        return {
-            ...AQUARIUM_DEFAULT,
-            aquarium_id: aquarium.aquarium_id,
-            name: aquarium.name,
-            created: aquarium.created,
-            fishes: aquariumFishBD.filter(fish =>
-                fish.aquarium_id == aquarium.aquarium_id
-            ).map(fish => {
-                return {
-                    ...fish.fish,
-                    quantity: fish.quantity
-                }
-            })
-        }
-    })
-
-    const aquariumUpdated = aquariums.map(aquarium =>
-        updateAquariumParameters(aquarium, aquarium.fishes.map(fish =>
-            prepareResponseFish(fish)
-        ))
-    )
-
-    return aquariumUpdated
+export async function deleteAquariumService(aquarium_id: number) {
+    const { error } = await supabaseBrowser.from('aquariums').delete().eq('id', aquarium_id)
+    if (error) { console.log(error); return { statusCode: 500 } }
+    return { statusCode: 200 }
 }

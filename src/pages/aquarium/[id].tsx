@@ -1,28 +1,26 @@
 import { GetServerSideProps } from "next"
-import Router from "next/router"
 import React, { useEffect, useState } from "react"
-import { getCurrentUser } from "../../services/user"
-import { USER_ROLE } from "../../utils/constants"
-import { AlertMessage, Aquarium, Fish, Food, Substrate } from "../../utils/types"
-import { parseCookies } from 'nookies'
+import { Fish, Food, Substrate } from "../../utils/types"
 import { listFoodsService } from "../../services/food"
 import { listSubstrateService } from "../../services/substrate"
 import { listFishesService } from "../../services/fish"
 import { getAquariumService } from "../../services/aquarium"
 import { useNewAquariumContext } from "../../contexts/NewAquariumContext"
+import { useRequireAuth } from "../../lib/auth/guards"
 import CardFish from "../../components/cards/CardFish"
 import CardAquarium from "../../components/cards/CardAquarium"
 import Image from "next/image"
 
 type EditAquariumProps = {
-    aquariumProps: Aquarium,
-    fishesProps: Fish[],
-    foodProps: Food[],
-    substrateProps: Substrate[],
-    error: string
+    id: string
+    fishesProps: Fish[]
+    foodProps: Food[]
+    substrateProps: Substrate[]
+    error: string | null
 }
 
-export default function EditAquarium({ aquariumProps, fishesProps, foodProps, substrateProps, error }: EditAquariumProps) {
+export default function EditAquarium({ id, fishesProps, foodProps, substrateProps, error }: EditAquariumProps) {
+    const { session } = useRequireAuth()
     const {
         aquarium,
         updateAquarium,
@@ -33,30 +31,28 @@ export default function EditAquarium({ aquariumProps, fishesProps, foodProps, su
         loadAquarium
     } = useNewAquariumContext()
 
-    const [loading, setLoading] = useState<boolean>(false)
-    const [message, setMessage] = useState<AlertMessage>()
+    const [loadError, setLoadError] = useState<string | null>(error)
 
     useEffect(() => {
-        console.log(aquariumProps)
-        if (!error) {
-            loadAquarium(aquariumProps, fishesProps)
-            foodProps && setFood(foodProps)
-            substrateProps && setSubstrate(substrateProps)
-        } else {
-            Router.push('/aquarium')
-        }
-    }, [])
+        if (!session || error) return
+        setFood(foodProps)
+        setSubstrate(substrateProps)
+        getAquariumService(id).then(res => {
+            if (res.statusCode !== 200 || !res.data) {
+                setLoadError('Não foi possível carregar este aquário.')
+                return
+            }
+            loadAquarium(res.data, fishesProps)
+        })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [session])
 
     return (
         <div className="w-full md:ml-24 flex">
-            {error
-                ? <div className="w-full h-screen m-auto p-12 w-96 h-72 flex flex-col gap-4 text-center items-center text-primary-medium justify-center">
-                    <span className="text-6xl">
-                        Ops..
-                    </span>
-                    <span className="text-2xl font-semibold">
-                        {error}
-                    </span>
+            {loadError
+                ? <div className="w-full h-screen m-auto p-12 flex flex-col gap-4 text-center items-center text-primary-medium justify-center">
+                    <span className="text-6xl">Ops..</span>
+                    <span className="text-2xl font-semibold">{loadError}</span>
                 </div>
                 : fishes && fishes.length > 0
                     ? <div className="flex flex-col w-full my-12 items-center md:mr-24 lg:items-start lg:mr-0 lg:flex-row lg:justify-evenly">
@@ -86,76 +82,26 @@ export default function EditAquarium({ aquariumProps, fishesProps, foodProps, su
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const { ['atlantis_token']: token } = parseCookies(ctx)
-
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
-        }
-    }
-
-    const currentUser = await getCurrentUser(token)
-
-    if (!currentUser?.data?.role_id) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
-        }
-    }
-
-    if (currentUser?.data?.role_id != USER_ROLE.SPECIALIST && currentUser?.data?.role_id != USER_ROLE.ADMINISTRATOR) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            }
-        }
-    }
-
     if (!ctx?.params?.id || typeof ctx.params.id != 'string') {
-        return {
-            redirect: {
-                destination: '/food',
-                permanent: false,
-            }
-        }
+        return { redirect: { destination: '/aquarium', permanent: false } }
     }
-
     const id = ctx.params.id
-    const response = await getAquariumService(id)
-    let error = null
-
-    console.log(response)
-
-    if (response.statusCode != 200) {
-        error = 'Algo deu errado, tente novamente mais tarde.'
-    }
 
     const fishes = await listFishesService()
     const food = await listFoodsService()
     const substrate = await listSubstrateService()
 
-    if (food?.statusCode != 200) {
-        return {
-            redirect: {
-                destination: '/aquarium',
-                permanent: false,
-            }
-        }
-    }
+    const error = (fishes.statusCode != 200 || food.statusCode != 200 || substrate.statusCode != 200)
+        ? 'Algo deu errado ao carregar os dados.'
+        : null
 
     return {
         props: {
-            aquariumProps: response.data,
-            fishesProps: fishes.data,
-            foodProps: food.data,
-            substrateProps: substrate.data,
-            error: error
+            id,
+            fishesProps: fishes.data ?? [],
+            foodProps: food.data ?? [],
+            substrateProps: substrate.data ?? [],
+            error,
         }
     }
 }
