@@ -13,10 +13,11 @@ Adicionar (Production + Preview):
 |---|---|---|
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://ungafoolmedlexptatbd.supabase.co` | pública (browser) |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | a publishable key (`sb_publishable_...`) | pública (browser) |
-| `SUPABASE_SERVICE_ROLE_KEY` | a secret key (`sb_secret_...`) | **só servidor** — opcional (app usa sessão+RLS) |
 | `GEMINI_API_KEY` | (se usar geração de imagem) | só servidor |
 
-**Remover** as antigas: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_API_KEY` (o código novo nem as lê; ficam órfãs).
+> O app usa apenas sessão + RLS (não há chave de serviço / bypass de RLS).
+
+**Remover** as antigas: `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `SUPABASE_API_KEY` e a `SUPABASE_SERVICE_ROLE_KEY` (o código novo não lê nenhuma delas; ficam órfãs).
 
 ## 2. Banco (já feito)
 

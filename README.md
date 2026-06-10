@@ -39,9 +39,8 @@ npm install
 ```
 NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=chave-publishable-do-supabase   # pode ir ao browser
-SUPABASE_SERVICE_ROLE_KEY=chave-secreta-do-supabase           # NUNCA exposta ao browser (só no servidor)
 ```
-> As duas primeiras são públicas (browser, com RLS). A `SUPABASE_SERVICE_ROLE_KEY` (formato `sb_secret_...`) bypassa a RLS e só é usada em `src/pages/api/*`/SSR — jamais no cliente.
+> Ambas são públicas (vão ao browser) e protegidas por RLS. O app autentica via sessão Supabase e nunca bypassa a RLS — não há chave de serviço.
 
 4 - Execute a aplicação localmente:
 ```
